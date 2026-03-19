@@ -1,7 +1,7 @@
 /* script.js - Updated with FULL Undo/Redo Memory Stack */
 
 // const apiUrl = 'http://127.0.0.1:5000/items';
-const apiUrl = '/items';
+const apiUrl = 'https://my-media-tracker-api.onrender.com/items';
 let allItems = [];
 let currentFilter = 'All';
 let isEditing = false;
