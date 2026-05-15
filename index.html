@@ -70,6 +70,19 @@
                 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
                 40%, 60% { transform: translate3d(4px, 0, 0); }
             }
+
+            /* --- Toast Animations --- */
+            .toast-in { animation: slideInRight 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; }
+            .toast-out { animation: fadeOut 0.5s ease forwards; }
+
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes fadeOut {
+                from { opacity: 1; transform: scale(1); }
+                to { opacity: 0; transform: scale(0.9); }
+            }
         }
 
         /* Custom Scrollbar for Dropdown if it gets too long */
@@ -144,6 +157,9 @@
                     <option value="az">🔤 ชื่อ A-Z</option>
                 </select>
             </div>
+        </div>
+
+        <div id="tagFiltersContainer" class="flex flex-wrap gap-2 mb-[20px] overflow-x-auto pb-2 custom-scrollbar">
         </div>
 
         <div class="mb-[20px]">
@@ -238,6 +254,8 @@
     <button id="scrollToTopBtn" onclick="scrollToTop()" class="fixed bottom-[100px] right-8 bg-accent dark:bg-accentDark text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 transition-all duration-300 translate-y-10 pointer-events-none z-[999] hover:scale-110">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
     </button>
+
+    <div id="toastContainer" class="fixed top-5 right-5 z-[3000] flex flex-col gap-3 pointer-events-none"></div>
 </body>
 
 </html>

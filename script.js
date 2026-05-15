@@ -4,6 +4,7 @@
 const apiUrl = 'https://my-media-tracker-api.onrender.com/items';
 let allItems = [];
 let currentFilter = 'All';
+let currentTagFilter = 'All';
 let isEditing = false;
 let selectedItems = new Set();
 
@@ -137,6 +138,7 @@ async function loadItems() {
         renderItems(allItems);
         updateDashboard(allItems);
         updateCharts(allItems);
+        updateTagFilters(allItems);
     } catch (error) {
         console.error("Load Error:", error);
         document.getElementById('mediaListContainer').innerHTML = '<p class="text-center py-10 opacity-50">❌ ไม่สามารถดึงข้อมูลได้ โปรดลองใหม่อีกครั้ง</p>';
@@ -238,13 +240,16 @@ function renderItems(items) {
         if (currentFilter === 'All') matchesStatus = true;
         else if (currentFilter === 'Progress') matchesStatus = (i.total_count > 0);
         else matchesStatus = (i.status === currentFilter);
-        
+
         const term = document.getElementById('searchInput').value.toLowerCase().trim();
         const itemAcronym = getAcronym(i.title);
         const itemTags = i.tags ? i.tags.toLowerCase() : "";
         const matchesSearch = i.title.toLowerCase().includes(term) || itemAcronym.includes(term) || itemTags.includes(term);
-        
-        return matchesStatus && matchesSearch;
+
+        const itemTagList = i.tags ? i.tags.split(',').map(t => t.trim()) : [];
+        const matchesTag = (currentTagFilter === 'All') || itemTagList.includes(currentTagFilter);
+
+        return matchesStatus && matchesSearch && matchesTag;
     });
 
     const sortType = document.getElementById('sortInput').value;
@@ -349,6 +354,7 @@ function loadMoreItems() {
 function setFilter(event, f) {
     if (event) event.preventDefault();
     currentFilter = f;
+    currentTagFilter = 'All';
     currentPage = 1;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     event.target.classList.add('active');
@@ -373,7 +379,7 @@ async function handleFormSubmit() {
     );
 
     if (isDuplicate) {
-        alert(`⚠️ ปฏิเสธการบันทึก: ชื่อเรื่อง "${title}" มีอยู่ในลิสต์เรียบร้อยแล้วครับ!`);
+        showToast(`ชื่อเรื่อง "${title}" มีอยู่ในลิสต์เรียบร้อยแล้วครับ!`, 'warning');
         titleInput.focus();
         return;
     }
@@ -628,7 +634,7 @@ function handleCategoryChange(selectElement) {
 // Function to export current data to a JSON file
 function exportData() {
     if (allItems.length === 0) {
-        alert("ไม่มีข้อมูลให้สำรองครับ (No data to export)");
+        showToast("ไม่มีข้อมูลให้สำรองครับ", 'info');
         return;
     }
 
@@ -703,11 +709,11 @@ async function importData(event) {
                 label.innerHTML = originalText;
                 label.style.pointerEvents = "auto";
 
-                alert("✅ นำเข้าข้อมูลเสร็จสิ้น! (Import completed!)");
+                showToast("✅ นำเข้าข้อมูลเสร็จสิ้น!", 'success');
                 loadItems(); // Refresh the display
             }
         } catch (error) {
-            alert("❌ ไฟล์ไม่ถูกต้อง หรือเกิดข้อผิดพลาดในการอ่านข้อมูล (Invalid file or read error)");
+            showToast("❌ ไฟล์ไม่ถูกต้อง หรือเกิดข้อผิดพลาดในการอ่านข้อมูล", 'error');
             console.error("Import Error:", error);
         }
     };
@@ -817,7 +823,7 @@ async function fetchMediaData() {
     const btn = document.getElementById('autofillBtn');
 
     if (!title) {
-        alert("⚠️ โปรดระบุชื่อเรื่องที่ต้องการค้นหาก่อนครับ!");
+        showToast("⚠️ โปรดระบุชื่อเรื่องที่ต้องการค้นหาก่อนครับ!");
         return;
     }
 
@@ -847,13 +853,13 @@ async function fetchMediaData() {
 
             if (window.refreshCategoryDropdown) refreshCategoryDropdown(allItems);
 
-            alert(`✅ ดึงข้อมูลเรื่อง "${data.title}" สำเร็จ!`);
+            showToast(`✅ ดึงข้อมูลเรื่อง "${data.title}" สำเร็จ!`, 'success');
         } else {
-            alert("❌ ไม่พบข้อมูลเรื่องนี้ในฐานข้อมูลครับ");
+            showToast("❌ ไม่พบข้อมูลเรื่องนี้ในฐานข้อมูลครับ", 'warning');
         }
     } catch (error) {
         console.error("Autofill Error:", error);
-        alert("❌ เกิดข้อผิดพลาดในการเชื่อมต่อกับ API ครับ");
+        showToast("❌ เกิดข้อผิดพลาดในการเชื่อมต่อกับ API ครับ", 'error');
     } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;
@@ -882,57 +888,79 @@ function showSkeleton() {
     }
 }
 
+// Toast Notification System
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+
+    const config = {
+        success: { bg: 'border-l-[#28a745]', icon: '✅', title: 'Success', textColor: 'text-[#28a745]' },
+        error: { bg: 'border-l-[#dc3545]', icon: '❌', title: 'Error', textColor: 'text-[#dc3545]' },
+        warning: { bg: 'border-l-[#f0ad4e]', icon: '⚠️', title: 'Warning', textColor: 'text-[#f0ad4e]' },
+        info: { bg: 'border-l-[#17a2b8]', icon: 'ℹ️', title: 'Info', textColor: 'text-[#17a2b8]' }
+    };
+
+    const current = config[type] || config.success;
+
+    toast.className = `toast-in pointer-events-auto bg-containerLight dark:bg-containerDark border-l-4 ${current.bg} p-4 rounded-xl shadow-2xl flex items-center gap-3 min-w-[280px] max-w-[350px] border border-gray-200 dark:border-zinc-800`;
+
+    toast.innerHTML = `
+        <div class="text-xl">${current.icon}</div>
+        <div class="flex-1">
+            <div class="font-bold text-[0.9em] ${current.textColor}">${current.title}</div>
+            <div class="text-[0.85em] opacity-90">${message}</div>
+        </div>
+        <button onclick="this.parentElement.remove()" class="opacity-50 hover:opacity-100 text-lg">×</button>
+    `;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('toast-out');
+        setTimeout(() => toast.remove(), 500);
+    }, 4000);
+}
+
+// Tag Filter System
+function updateTagFilters(items) {
+    const container = document.getElementById('tagFiltersContainer');
+    if (!container) return;
+
+    const allTags = new Set();
+    items.forEach(item => {
+        if (item.tags) {
+            item.tags.split(',').forEach(t => {
+                const tag = t.trim();
+                if (tag) allTags.add(tag);
+            });
+        }
+    });
+
+    const sortedTags = Array.from(allTags).sort();
+    let html = `
+        <button onclick="setTagFilter('All')" class="px-3 py-1.5 rounded-lg text-[0.8em] font-bold transition-all border ${currentTagFilter === 'All' ? 'bg-accent text-white border-accent' : 'bg-black/5 dark:bg-white/5 border-gray-200 dark:border-zinc-700 opacity-60'}">
+            # ทั้งหมด
+        </button>
+    `;
+
+    sortedTags.forEach(tag => {
+        const isActive = currentTagFilter === tag;
+        html += `
+            <button onclick="setTagFilter('${tag}')" class="px-2.5 py-1 rounded-full text-[0.75em] font-medium transition-all border ${isActive ? 'bg-accent text-white border-accent' : 'bg-black/5 dark:bg-white/5 border-gray-200 dark:border-zinc-700 opacity-70 hover:opacity-100'}">
+                # ${tag}
+            </button>
+        `;
+    });
+
+    container.innerHTML = html;
+}
+
+function setTagFilter(tag) {
+    currentTagFilter = tag;
+    renderItems(allItems);
+    updateTagFilters(allItems);
+}
+
 // Initialize app
 loadItems();
-updateUndoRedoUI(); // ล็อกปุ่มไว้ตั้งแต่เริ่ม
-
-// ----------------- Backup / Restore Systems -----------------
-// async function backupToMongo() {
-//     const btn = document.getElementById('backupBtn');
-//     const originalText = btn.innerHTML;
-//     btn.innerHTML = '⏳ Backing up...';
-//     btn.disabled = true;
-//     btn.classList.add('opacity-70', 'cursor-not-allowed');
-
-//     try {
-//         const response = await fetch('http://127.0.0.1:5000/backup/mongodb', { method: 'POST' });
-//         const data = await response.json();
-//         if (response.ok) alert(`✅ สำรองข้อมูลขึ้น MongoDB Atlas สำเร็จ!\nข้อมูลทั้งหมด ${data.count} รายการ ถูกเก็บไว้ใน Cluster ของ MyScheduleBot แล้วครับ`);
-//         else alert(`❌ เกิดข้อผิดพลาดจากเซิร์ฟเวอร์: ${data.error}`);
-//     } catch (error) {
-//         alert(`❌ เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ โปรดตรวจสอบอินเทอร์เน็ต`);
-//         console.error("Backup Error:", error);
-//     } finally {
-//         btn.innerHTML = originalText;
-//         btn.disabled = false;
-//         btn.classList.remove('opacity-70', 'cursor-not-allowed');
-//     }
-// }
-
-// async function restoreFromMongo() {
-//     if (!confirm("⚠️ คำเตือน: การ Restore จะลบข้อมูลปัจจุบันในเครื่อง แล้วแทนที่ด้วยข้อมูลจาก Cloud ทั้งหมด\nคุณแน่ใจหรือไม่ที่จะดำเนินการต่อ?")) return;
-
-//     const btn = document.getElementById('restoreBtn');
-//     const originalText = btn.innerHTML;
-//     btn.innerHTML = '⏳ Restoring...';
-//     btn.disabled = true;
-//     btn.classList.add('opacity-70', 'cursor-not-allowed');
-
-//     try {
-//         const response = await fetch('http://127.0.0.1:5000/restore/mongodb', { method: 'POST' });
-//         const data = await response.json();
-//         if (response.ok) {
-//             alert(`✅ กู้คืนข้อมูลสำเร็จ!\nดึงข้อมูลลงมาทั้งหมด ${data.count} รายการ เรียบร้อยแล้ว`);
-//             loadItems(); 
-//         } else {
-//             alert(`❌ ไม่สามารถกู้คืนได้: ${data.error || data.message}`);
-//         }
-//     } catch (error) {
-//         alert(`❌ เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ โปรดตรวจสอบอินเทอร์เน็ต`);
-//         console.error("Restore Error:", error);
-//     } finally {
-//         btn.innerHTML = originalText;
-//         btn.disabled = false;
-//         btn.classList.remove('opacity-70', 'cursor-not-allowed');
-//     }
-// }
+updateUndoRedoUI();
