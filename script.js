@@ -174,6 +174,14 @@ async function loadItems() {
 
     try {
         const response = await fetch(apiUrl, { headers: getAuthHeaders() });
+        if (response.status === 401) {
+            console.warn("Token expired or unauthorized. Forcing logout.");
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('current_username');
+            location.reload();
+            return;
+        }
+
         allItems = await response.json();
         refreshCategoryDropdown(allItems);
         renderItems(allItems);
@@ -1017,9 +1025,18 @@ async function handleLogin() {
     if (response.ok) {
         const data = await response.json();
         localStorage.setItem('access_token', data.access_token);
-        location.reload(); // รีเฟรชหน้าเพื่อเริ่มโหลดข้อมูล
+        localStorage.setItem('current_username', username); // 🌟 บันทึกชื่อ User เก็บไว้โชว์
+        location.reload();
     } else {
         showToast("Login Failed!", 'error');
+    }
+}
+
+function handleLogout() {
+    if (confirm("ต้องการออกจากระบบใช่หรือไม่?")) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('current_username');
+        location.reload();
     }
 }
 
@@ -1034,11 +1051,19 @@ function getAuthHeaders() {
 function checkAuth() {
     const token = localStorage.getItem('access_token');
     const modal = document.getElementById('loginModal');
+    const userInfoPanel = document.getElementById('userInfoPanel');
+    const usernameDisplay = document.getElementById('currentUsernameDisplay');
 
     if (!token) {
         modal.classList.remove('hidden');
+        if (userInfoPanel) userInfoPanel.classList.add('hidden');
     } else {
         modal.classList.add('hidden');
+        if (userInfoPanel) userInfoPanel.classList.remove('hidden');
+
+        const savedName = localStorage.getItem('current_username') || "User";
+        if (usernameDisplay) usernameDisplay.textContent = savedName;
+
         loadItems();
     }
 }
@@ -1106,9 +1131,6 @@ async function handleRegister(event) {
     }
 }
 
-checkAuth();
-updateUndoRedoUI();
-
 // Initialize app
-loadItems();
+checkAuth();
 updateUndoRedoUI();

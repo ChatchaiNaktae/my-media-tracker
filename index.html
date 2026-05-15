@@ -150,12 +150,20 @@
     </div>
 
     <div class="w-full max-w-[700px] bg-containerLight dark:bg-containerDark p-4 sm:p-[30px] rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.1)] h-fit pb-[60px]">
-        
         <div class="flex justify-between items-center mb-5">
-            <h2 class="text-2xl font-bold m-0">Media Tracker (บันทึกการดู/เล่น)</h2>
-            <button class="theme-toggle bg-bgLight dark:bg-bgDark border-2 border-accent dark:border-accentDark text-gray-800 dark:text-gray-200 w-10 h-10 rounded-full cursor-pointer text-[1.2rem] flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-[0_0_10px_rgba(0,0,0,0.1)]" onclick="toggleTheme()">
-                <span id="themeIcon">☀️</span>
-            </button>
+            <h2 class="text-2xl font-bold m-0 flex-1">Media Tracker (บันทึกการดู/เล่น)</h2>
+            <div class="flex items-center gap-3">
+                <div id="userInfoPanel" class="hidden flex items-center gap-2 bg-black/5 dark:bg-white/5 px-3 py-1.5 rounded-full border border-gray-200 dark:border-zinc-700">
+                    <span class="text-sm font-semibold opacity-80 text-gray-800 dark:text-gray-200" id="currentUsernameDisplay">User</span>
+                    <div class="w-px h-4 bg-gray-300 dark:bg-zinc-700"></div>
+                    <button onclick="handleLogout()" class="text-sm font-bold text-[#dc3545] hover:opacity-70 transition-opacity" title="ออกจากระบบ">
+                        Logout
+                    </button>
+                </div>
+                <button class="theme-toggle bg-bgLight dark:bg-bgDark border-2 border-accent dark:border-accentDark text-gray-800 dark:text-gray-200 w-10 h-10 rounded-full cursor-pointer text-[1.2rem] flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-[0_0_10px_rgba(0,0,0,0.1)] shrink-0" onclick="toggleTheme()">
+                    <span id="themeIcon">☀️</span>
+                </button>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-[15px] mb-[25px]">
