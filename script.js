@@ -367,7 +367,8 @@ function startEditItem(id) {
     const i = allItems.find(x => x.id === id);
     document.getElementById('titleInput').value = i.title;
     document.getElementById('linkInput').value = i.link || ''; 
-    document.getElementById('coverInput').value = i.cover_image || ''; 
+    document.getElementById('coverInput').value = i.cover_image || '';
+    previewCoverImage();
     document.getElementById('tagsInput').value = i.tags || ''; 
     document.getElementById('currentProgressInput').value = i.current_progress;
     document.getElementById('totalCountInput').value = i.total_count;
@@ -387,6 +388,7 @@ function cancelEdit() {
     isEditing = false;
     document.getElementById('editId').value = '';
     document.querySelectorAll('input, textarea').forEach(x => x.value = '');
+    previewCoverImage();
     document.getElementById('submitBtn').textContent = "Add to List (เพิ่มรายการ)";
     document.getElementById('cancelBtn').classList.add('hidden');
 }
@@ -662,6 +664,26 @@ async function importData(event) {
     // Reset file input so the exact same file can be selected again if needed
     event.target.value = '';
 }
+
+// Function to preview cover image before saving
+function previewCoverImage() {
+    const url = document.getElementById('coverInput').value.trim();
+    const preview = document.getElementById('coverPreview');
+
+    if (url) {
+        preview.src = url;
+        preview.classList.remove('hidden'); // แสดงรูป
+    } else {
+        preview.src = '';
+        preview.classList.add('hidden'); // ซ่อนรูปถ้าไม่มีลิงก์
+    }
+}
+
+// Error Handler: ถ้ารูปโหลดไม่ขึ้น (ลิงก์เสีย/ไม่ใช่รูปภาพ) ให้ซ่อนรูปทิ้งไป
+document.getElementById('coverPreview').addEventListener('error', function() {
+    this.src = '';
+    this.classList.add('hidden');
+});
 
 // Initialize app
 loadItems();
