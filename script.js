@@ -442,21 +442,36 @@ function addNewCategory() {
         }
 
         if (!exists) {
+            // 🌟 เพิ่ม Prompt หน้าต่างที่ 2 สำหรับขออีโมจิ
+            let emoji = prompt(`ใส่อีโมจิสำหรับหมวดหมู่ "${catName}" (เช่น 🤖, 📖, 🎲)\n*ถ้าไม่ใส่ ระบบจะใช้ 🏷️ ให้แทน*`);
+
+            // เช็คว่าถ้ากดยกเลิก หรือไม่พิมพ์อะไรเลย ให้ใช้ 🏷️
+            if (!emoji || emoji.trim() === "") {
+                emoji = "🏷️";
+            } else {
+                emoji = emoji.trim();
+            }
+
             const opt = document.createElement('option');
             opt.value = catName;
-            opt.text = "🏷️ " + catName;
+            opt.text = emoji + " " + catName; // เอาอีโมจิมาต่อหน้าชื่อ
 
             const addNewOptionIndex = select.options.length - 1;
             select.insertBefore(opt, select.options[addNewOptionIndex]);
-
             select.value = catName;
 
-            // Save new category to LocalStorage
-            let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '[]');
-            if (!savedCustomCats.includes(catName)) {
-                savedCustomCats.push(catName);
-                localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
+            // 🌟 Save to LocalStorage แบบ Object (เก็บชื่อคู่กับอีโมจิ)
+            let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
+
+            // ตัวกันเหนียว: เผื่อระบบเดิมของคุณเซฟเป็น Array ไว้ ให้แปลงเป็น Object ก่อน ป้องกันบัค
+            if (Array.isArray(savedCustomCats)) {
+                const tempObj = {};
+                savedCustomCats.forEach(c => tempObj[c] = "🏷️");
+                savedCustomCats = tempObj;
             }
+
+            savedCustomCats[catName] = emoji; // บันทึกข้อมูล เช่น {"Series": "🎞️"}
+            localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
         }
     } else {
         select.selectedIndex = 0;
@@ -472,20 +487,27 @@ function addNewCategory() {
 function refreshCategoryDropdown(items) {
     const select = document.getElementById('categoryInput');
 
-    // Find all unique categories currently saved in the database
     const uniqueCategories = new Set();
     items.forEach(item => {
         if (item.category) uniqueCategories.add(item.category);
     });
 
-    // Load custom categories from LocalStorage and merge them
-    const savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '[]');
-    savedCustomCats.forEach(cat => uniqueCategories.add(cat));
+    // Load custom categories from LocalStorage
+    let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
 
-    // Find the "ADD_NEW" option to insert new categories above it
+    // ตัวกันเหนียว: เผื่อระบบเดิมเซฟเป็น Array ไว้
+    if (Array.isArray(savedCustomCats)) {
+        const tempObj = {};
+        savedCustomCats.forEach(c => tempObj[c] = "🏷️");
+        savedCustomCats = tempObj;
+        localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
+    }
+
+    // เอาชื่อหมวดหมู่ที่เซฟไว้ มารวมกับข้อมูลจากฐานข้อมูล
+    Object.keys(savedCustomCats).forEach(cat => uniqueCategories.add(cat));
+
     const addNewOption = Array.from(select.options).find(opt => opt.value === "ADD_NEW");
 
-    // Append missing categories to the dropdown
     uniqueCategories.forEach(cat => {
         let exists = false;
         for (let i = 0; i < select.options.length; i++) {
@@ -498,7 +520,10 @@ function refreshCategoryDropdown(items) {
         if (!exists) {
             const opt = document.createElement('option');
             opt.value = cat;
-            opt.text = "🏷️ " + cat;
+
+            // 🌟 ดึงอีโมจิจากที่เซฟไว้ ถ้าไม่เจอ (เช่น เป็นข้อมูลเก่าจาก DB) ให้ใช้ 🏷️
+            const emoji = savedCustomCats[cat] || "🏷️";
+            opt.text = emoji + " " + cat;
 
             if (addNewOption) {
                 select.insertBefore(opt, addNewOption);
@@ -508,7 +533,6 @@ function refreshCategoryDropdown(items) {
         }
     });
 
-    // Rebuild the custom UI dropdown list
     updateCustomDropdownUI(select);
 }
 
