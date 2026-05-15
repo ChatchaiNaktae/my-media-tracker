@@ -49,6 +49,19 @@ function updateUndoRedoUI() {
     }
 }
 
+// PWA Service Worker Registration
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            })
+            .catch(error => {
+                console.log('ServiceWorker registration failed: ', error);
+            });
+    });
+}
+
 async function triggerUndo() {
     if (undoStack.length === 0) return;
     const action = undoStack.pop();
@@ -1001,21 +1014,66 @@ function checkAuth() {
     }
 }
 
-async function handleRegister() {
-    const username = document.getElementById('usernameInput').value;
-    const password = document.getElementById('passwordInput').value;
+function toggleAuthView(view) {
+    const loginSec = document.getElementById('loginSection');
+    const regSec = document.getElementById('registerSection');
 
-    const response = await fetch(`${apiUrl.replace('/items', '')}/register`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ username, password })
-    });
-
-    if (response.ok) {
-        showToast("สมัครสมาชิกสำเร็จ! โปรดล็อกอิน", 'success');
+    if (view === 'register') {
+        loginSec.classList.add('hidden');
+        regSec.classList.remove('hidden');
     } else {
-        const res = await response.json();
-        showToast(res.message || "Registration Failed!", 'error');
+        regSec.classList.add('hidden');
+        loginSec.classList.remove('hidden');
+    }
+}
+
+async function handleRegister(event) {
+    const username = document.getElementById('regUsernameInput').value.trim();
+    const password = document.getElementById('regPasswordInput').value;
+    const confirmPass = document.getElementById('regConfirmPassword').value;
+
+    if (!username || !password) {
+        showToast("⚠️ โปรดกรอกข้อมูลให้ครบถ้วน", 'warning');
+        return;
+    }
+    if (password !== confirmPass) {
+        showToast("❌ รหัสผ่านไม่ตรงกัน โปรดลองใหม่", 'error');
+        return;
+    }
+
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = "⏳ Registering...";
+    btn.disabled = true;
+
+    try {
+        const response = await fetch(`${apiUrl.replace('/items', '')}/register`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ username, password })
+        });
+
+        if (response.ok) {
+            showToast("✅ สมัครสมาชิกสำเร็จ! โปรดล็อกอิน", 'success');
+
+            toggleAuthView('login');
+
+            document.getElementById('usernameInput').value = username;
+            document.getElementById('passwordInput').value = '';
+
+            document.getElementById('regUsernameInput').value = '';
+            document.getElementById('regPasswordInput').value = '';
+            document.getElementById('regConfirmPassword').value = '';
+        } else {
+            const res = await response.json();
+            showToast(res.message || "❌ Registration Failed!", 'error');
+        }
+    } catch (error) {
+        console.error(error);
+        showToast("❌ Server error during registration.", 'error');
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
     }
 }
 
