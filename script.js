@@ -314,16 +314,16 @@ function renderItems(items) {
                     <input type="checkbox" data-id="${item.id}" onchange="handleCheckboxChange(this, ${item.id})" class="item-checkbox w-6 h-6 shrink-0 cursor-pointer accent-accent dark:accent-accentDark rounded-md">
                     ${coverHtml}
                     <div class="item-info flex-1 min-w-0">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="item-title text-[1.2em]">
+                        <div class="flex justify-between items-start gap-2">
+                            <div class="flex-1 min-w-0">
+                                <div class="item-title text-[1.1em] leading-tight break-words">
                                     ${item.title} 
-                                    <span class="item-rating text-sm">${'⭐'.repeat(item.rating)}</span>
+                                    <span class="item-rating text-sm whitespace-nowrap">${'⭐'.repeat(item.rating)}</span>
                                     ${linkHtml}
-                                </span>
+                                </div>
                                 ${tagsHtml}
                             </div>
-                            <div class="actions ml-2 flex gap-1.5">
+                            <div class="actions shrink-0 flex gap-1.5">
                                 <button class="btn-icon btn-edit text-sm p-[6px_10px]" onclick="startEditItem(${item.id})">✏️</button>
                                 <button class="btn-icon btn-delete text-sm p-[6px_10px]" onclick="deleteItem(${item.id})">🗑️</button>
                             </div>
