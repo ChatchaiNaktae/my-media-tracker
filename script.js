@@ -450,6 +450,13 @@ function addNewCategory() {
             select.insertBefore(opt, select.options[addNewOptionIndex]);
 
             select.value = catName;
+
+            // Save new category to LocalStorage
+            let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '[]');
+            if (!savedCustomCats.includes(catName)) {
+                savedCustomCats.push(catName);
+                localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
+            }
         }
     } else {
         select.selectedIndex = 0;
@@ -471,7 +478,11 @@ function refreshCategoryDropdown(items) {
         if (item.category) uniqueCategories.add(item.category);
     });
 
-    // หาตัวเลือก "ADD_NEW" ว่าอยู่ตรงไหน เพื่อที่เราจะได้แทรกหมวดหมู่ใหม่ไว้ข้างบนมัน
+    // Load custom categories from LocalStorage and merge them
+    const savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '[]');
+    savedCustomCats.forEach(cat => uniqueCategories.add(cat));
+
+    // Find the "ADD_NEW" option to insert new categories above it
     const addNewOption = Array.from(select.options).find(opt => opt.value === "ADD_NEW");
 
     // Append missing categories to the dropdown
@@ -489,7 +500,6 @@ function refreshCategoryDropdown(items) {
             opt.value = cat;
             opt.text = "🏷️ " + cat;
 
-            // แทรกหมวดหมู่ที่โหลดจาก DB ไว้ก่อนปุ่ม ADD_NEW
             if (addNewOption) {
                 select.insertBefore(opt, addNewOption);
             } else {
