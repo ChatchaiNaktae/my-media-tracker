@@ -349,8 +349,15 @@ function setFilter(event, f) {
 
 // Handle Form Submission
 async function handleFormSubmit() {
-    const title = document.getElementById('titleInput').value.trim();
-    if(!title) return;
+    const titleInput = document.getElementById('titleInput');
+    const title = titleInput.value.trim();
+
+    if(!title) {
+        titleInput.classList.add('input-error', 'animate-shake'); // สั่งให้ขอบแดงและสั่น
+        titleInput.placeholder = "⚠️ กรุณาใส่ชื่อเรื่องก่อนบันทึก!";
+        setTimeout(() => titleInput.classList.remove('animate-shake'), 400);
+        return;
+    }
     
     const data = {
         title,
@@ -424,7 +431,14 @@ async function deleteItem(id) {
     }
 }
 
-function handleSearch() { currentPage = 1; renderItems(allItems); }
+let searchTimeout;
+function handleSearch() {
+    clearTimeout(searchTimeout); // ถ้านิ้วยังพิมพ์อยู่ ให้ยกเลิกการค้นหารอบที่แล้วทิ้งไป
+    searchTimeout = setTimeout(() => {
+        currentPage = 1;
+        renderItems(allItems);
+    }, 300);
+}
 function handleSort() { currentPage = 1; renderItems(allItems); }
 
 // Theme Toggle System
@@ -705,6 +719,12 @@ document.getElementById('coverPreview').addEventListener('error', function() {
     this.src = '';
     this.classList.add('hidden');
 });
+
+// Function to clear error styling when user starts typing
+function clearTitleError(element) {
+    element.classList.remove('input-error');
+    element.placeholder = "ชื่อเรื่อง (Title)";
+}
 
 // Initialize app
 loadItems();
