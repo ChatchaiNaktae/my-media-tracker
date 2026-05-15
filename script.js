@@ -14,6 +14,8 @@ const itemsPerPage = 15;
 let undoStack = [];
 let redoStack = [];
 
+let mediaChart = null;
+
 function saveAction(action) {
     undoStack.push(action);
     if (undoStack.length > 30) undoStack.shift(); // จำย้อนหลังได้สูงสุด 30 รายการล่าสุด
@@ -132,6 +134,7 @@ async function loadItems() {
         refreshCategoryDropdown(allItems);
         renderItems(allItems);
         updateDashboard(allItems);
+        updateCharts(allItems);
     } catch (error) { console.error("Load Error:", error); }
 }
 
@@ -752,6 +755,55 @@ window.onscroll = function() {
 
 function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Data Visualization System
+function updateCharts(items) {
+    const ctx = document.getElementById('mediaChart');
+    if (!ctx) return;
+
+    const counts = {};
+    items.forEach(item => {
+        counts[item.category] = (counts[item.category] || 0) + 1;
+    });
+
+    const labels = Object.keys(counts);
+    const data = Object.values(counts);
+
+    if (mediaChart) {
+        mediaChart.destroy();
+    }
+
+    const isDark = document.documentElement.classList.contains('dark-mode');
+    mediaChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: [
+                    '#4a90e2', '#bb86fc', '#28a745', '#f0ad4e', '#dc3545', '#17a2b8'
+                ],
+                borderWidth: 0,
+                hoverOffset: 15
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: isDark ? '#e0e0e0' : '#333',
+                        font: { family: 'Prompt', size: 12 },
+                        padding: 20
+                    }
+                }
+            }
+        }
+    });
 }
 
 // Initialize app

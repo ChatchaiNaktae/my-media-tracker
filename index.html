@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
         tailwind.config = {
@@ -121,6 +122,12 @@
             <div class="bg-bgLight dark:bg-bgDark p-[15px] rounded-xl border border-gray-200 dark:border-zinc-800 text-center">
                 <h3 class="m-0 text-[0.85em] opacity-70 font-semibold">⏳ To Do (ดองไว้)</h3>
                 <span id="todoCount" class="block text-[1.6em] font-bold mt-[5px] text-[#f0ad4e]">0</span>
+            </div>
+        </div>
+        <div class="mb-[25px] p-[20px] bg-bgLight dark:bg-bgDark rounded-xl border border-gray-200 dark:border-zinc-800 shadow-sm">
+            <h3 class="text-center mb-4 text-[0.85em] opacity-70 font-semibold uppercase tracking-wider">📊 สัดส่วนหมวดหมู่ (Category Distribution)</h3>
+            <div class="relative h-[230px] flex justify-center">
+                <canvas id="mediaChart"></canvas>
             </div>
         </div>
 
