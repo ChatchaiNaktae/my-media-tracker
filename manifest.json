@@ -1,0 +1,11 @@
+{
+  "name": "My Media Tracker",
+  "short_name": "MediaTracker",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#bb86fc",
+  "icons": [
+    { "src": "Assets/Images/favicon.ico", "sizes": "64x64", "type": "image/x-icon" }
+  ]
+}

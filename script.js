@@ -961,6 +961,67 @@ function setTagFilter(tag) {
     updateTagFilters(allItems);
 }
 
+// Auth System
+async function handleLogin() {
+    const username = document.getElementById('usernameInput').value;
+    const password = document.getElementById('passwordInput').value;
+
+    const response = await fetch(`${apiUrl.replace('/items', '')}/login`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username, password })
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('access_token', data.access_token);
+        location.reload(); // รีเฟรชหน้าเพื่อเริ่มโหลดข้อมูล
+    } else {
+        showToast("Login Failed!", 'error');
+    }
+}
+
+function getAuthHeaders() {
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+    };
+}
+
+// Auth System
+function checkAuth() {
+    const token = localStorage.getItem('access_token');
+    const modal = document.getElementById('loginModal');
+
+    if (!token) {
+        modal.classList.remove('hidden');
+    } else {
+        modal.classList.add('hidden');
+        loadItems();
+    }
+}
+
+async function handleRegister() {
+    const username = document.getElementById('usernameInput').value;
+    const password = document.getElementById('passwordInput').value;
+
+    const response = await fetch(`${apiUrl.replace('/items', '')}/register`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username, password })
+    });
+
+    if (response.ok) {
+        showToast("สมัครสมาชิกสำเร็จ! โปรดล็อกอิน", 'success');
+    } else {
+        const res = await response.json();
+        showToast(res.message || "Registration Failed!", 'error');
+    }
+}
+
+checkAuth();
+updateUndoRedoUI();
+
 // Initialize app
 loadItems();
 updateUndoRedoUI();

@@ -3,6 +3,8 @@ from flask_cors import CORS
 from datetime import datetime
 from pymongo import MongoClient
 from dotenv import load_dotenv
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 import os
 import time
 import certifi
@@ -15,10 +17,15 @@ MONGO_URI = os.getenv("MONGO_URI")
 app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
+bcrypt = Bcrypt(app)
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "super-secret-key")
+jwt = JWTManager(app)
+
 # เชื่อมต่อ MongoDB Atlas เป็นฐานข้อมูลหลัก
 client = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
 db = client['MediaTracker']
 collection = db['media_list']
+users_coll = db['users']
 
 # 🌟 ระบบโอนย้ายข้อมูลอัตโนมัติ: ถ้าฐานข้อมูลหลักว่างเปล่า ให้ไปดึงจากตัวที่เคย Backup ไว้มาใส่
 if collection.count_documents({}) == 0:
@@ -26,6 +33,26 @@ if collection.count_documents({}) == 0:
     if backup_coll.count_documents({}) > 0:
         collection.insert_many(list(backup_coll.find({}, {'_id': 0})))
         print("Migrated data from backup successfully!")
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    if users_coll.find_one({"username": data['username']}):
+        return jsonify({"message": "Username already exists"}), 400
+
+    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+    users_coll.insert_one({"username": data['username'], "password": hashed_password})
+    return jsonify({"message": "User registered successfully"}), 201
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    user = users_coll.find_one({"username": data['username']})
+
+    if user and bcrypt.check_password_hash(user['password'], data['password']):
+        access_token = create_access_token(identity=data['username'])
+        return jsonify(access_token=access_token), 200
+    return jsonify({"message": "Invalid username or password"}), 401
 
 @app.route('/')
 def root():

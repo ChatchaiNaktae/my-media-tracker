@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Media Tracker</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/x-icon" href="Assets/Images/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -101,6 +102,17 @@
 </head>
 
 <body class="font-sans bg-bgLight text-gray-800 dark:bg-bgDark dark:text-gray-200 m-0 p-5 transition-colors duration-300 flex justify-center min-h-screen">
+    <div id="loginModal" class="fixed inset-0 bg-black/80 z-[5000] flex items-center justify-center p-5 hidden">
+        <div class="bg-containerLight dark:bg-containerDark p-8 rounded-2xl w-full max-w-[400px] shadow-2xl border border-gray-200 dark:border-zinc-800">
+            <h2 class="text-2xl font-bold mb-6 text-center">🔐 Login to Tracker</h2>
+            <div class="flex flex-col gap-4">
+                <input type="text" id="usernameInput" placeholder="Username" class="p-3 border rounded-xl dark:bg-bgDark">
+                <input type="password" id="passwordInput" placeholder="Password" class="p-3 border rounded-xl dark:bg-bgDark">
+                <button onclick="handleLogin()" class="p-3 bg-accent text-white font-bold rounded-xl">Login</button>
+                <button onclick="handleRegister()" class="text-sm opacity-60">No account? Register here</button>
+            </div>
+        </div>
+    </div>
 
     <div class="fixed bottom-5 right-5 bg-containerLight dark:bg-containerDark p-2.5 rounded-[50px] shadow-[0_4px_15px_rgba(0,0,0,0.2)] flex gap-2.5 z-[1000] border border-gray-200 dark:border-zinc-800">
 <!--        <button id="undoBtn" onclick="triggerUndo()" disabled class="px-[15px] py-2 bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-zinc-800 rounded-xl text-[0.9em] disabled:opacity-30 disabled:cursor-not-allowed">↩️ Undo (ย้อนกลับ)</button>-->
