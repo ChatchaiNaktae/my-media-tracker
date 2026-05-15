@@ -128,6 +128,8 @@ async function quickProgress(id, current, total) {
 
 // Load data from backend
 async function loadItems() {
+    showSkeleton();
+
     try {
         const response = await fetch(apiUrl);
         allItems = await response.json();
@@ -135,7 +137,10 @@ async function loadItems() {
         renderItems(allItems);
         updateDashboard(allItems);
         updateCharts(allItems);
-    } catch (error) { console.error("Load Error:", error); }
+    } catch (error) {
+        console.error("Load Error:", error);
+        document.getElementById('mediaListContainer').innerHTML = '<p class="text-center py-10 opacity-50">❌ ไม่สามารถดึงข้อมูลได้ โปรดลองใหม่อีกครั้ง</p>';
+    }
 }
 
 function updateDashboard(items) {
@@ -852,6 +857,28 @@ async function fetchMediaData() {
     } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;
+    }
+}
+
+// Skeleton Loading System
+function showSkeleton() {
+    const listContainer = document.getElementById('mediaListContainer');
+    listContainer.innerHTML = ''; // ล้างหน้าจอเดิม
+
+    for (let i = 0; i < 5; i++) {
+        const div = document.createElement('div');
+        div.className = "bg-itemLight dark:bg-itemDark mb-3 p-[15px] rounded-xl flex items-center gap-4 border border-transparent";
+
+        div.innerHTML = `
+            <div class="w-[85px] h-[120px] skeleton shrink-0"></div>
+            <div class="flex-1">
+                <div class="h-6 w-3/4 skeleton mb-3"></div>
+                <div class="h-4 w-1/2 skeleton mb-2"></div>
+                <div class="h-4 w-full skeleton mb-2"></div>
+                <div class="h-10 w-full skeleton mt-4"></div>
+            </div>
+        `;
+        listContainer.appendChild(div);
     }
 }
 
