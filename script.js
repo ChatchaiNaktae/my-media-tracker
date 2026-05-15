@@ -289,7 +289,7 @@ function renderItems(items) {
             ul.className = 'category-list';
             groups[cat].forEach(item => {
                 const li = document.createElement('li');
-                li.className = "bg-itemLight dark:bg-itemDark mb-3 p-[15px] rounded-xl flex items-center gap-4 transition-all duration-200 shadow-sm border border-transparent hover:border-accent hover:dark:border-accentDark";
+                li.className = "bg-itemLight dark:bg-itemDark mb-3 p-3 sm:p-[15px] rounded-xl flex items-start gap-3 sm:gap-4 transition-all duration-200 shadow-sm border border-transparent hover:border-accent hover:dark:border-accentDark";
                 
                 // Calculate percentage only if total_count is greater than 0
                 const percent = item.total_count > 0 ? (item.current_progress / item.total_count) * 100 : 0;
@@ -304,40 +304,41 @@ function renderItems(items) {
                 }
 
                 let coverHtml = item.cover_image
-                    ? `<img src="${item.cover_image}" class="w-[85px] h-[120px] object-cover rounded-lg shadow-md shrink-0 border border-gray-200 dark:border-zinc-700" alt="Cover">`
-                    : `<div class="w-[85px] h-[120px] bg-black/5 dark:bg-white/5 rounded-lg flex items-center justify-center shrink-0 text-3xl border border-dashed border-gray-300 dark:border-zinc-700">📸</div>`;
+                    ? `<img src="${item.cover_image}" class="w-[65px] h-[90px] sm:w-[85px] sm:h-[120px] object-cover rounded-lg shadow-md shrink-0 border border-gray-200 dark:border-zinc-700" alt="Cover">`
+                    : `<div class="w-[65px] h-[90px] sm:w-[85px] sm:h-[120px] bg-black/5 dark:bg-white/5 rounded-lg flex items-center justify-center shrink-0 text-3xl border border-dashed border-gray-300 dark:border-zinc-700">📸</div>`;
 
                 let displayTotal = item.total_count > 0 ? item.total_count : "? (Ongoing)";
 
                 li.innerHTML = `
-                    <input type="checkbox" data-id="${item.id}" onchange="handleCheckboxChange(this, ${item.id})" class="item-checkbox w-6 h-6 shrink-0 cursor-pointer accent-accent dark:accent-accentDark rounded-md">
+                    <input type="checkbox" data-id="${item.id}" onchange="handleCheckboxChange(this, ${item.id})" class="item-checkbox mt-1 sm:mt-0 w-5 h-5 sm:w-6 sm:h-6 shrink-0 cursor-pointer accent-accent dark:accent-accentDark rounded-md">
                     ${coverHtml}
                     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
                         <div class="flex justify-between items-start gap-2 w-full min-w-0">
                             <div class="flex-1 min-w-0 overflow-hidden">
-                                <div class="font-semibold text-[1.1em] leading-tight break-words">
+                                <div class="font-semibold text-[1rem] sm:text-[1.1em] leading-tight break-words whitespace-normal">
                                     ${item.title} 
-                                    <span class="text-yellow-400 text-sm whitespace-nowrap inline-block ml-1">${'⭐'.repeat(item.rating)}</span>
+                                    <span class="text-yellow-400 text-xs sm:text-sm whitespace-nowrap inline-block ml-1">${'⭐'.repeat(item.rating)}</span>
                                     ${linkHtml}
                                 </div>
                                 ${tagsHtml}
                             </div>
                             
-                            <div class="flex gap-1.5 shrink-0">
-                                <button class="btn-icon btn-edit text-sm p-[6px_10px]" onclick="startEditItem(${item.id})">✏️</button>
-                                <button class="btn-icon btn-delete text-sm p-[6px_10px]" onclick="deleteItem(${item.id})">🗑️</button>
+                            <div class="flex flex-col sm:flex-row gap-1.5 shrink-0">
+                                <button class="btn-icon btn-edit text-xs sm:text-sm p-1.5 sm:p-[6px_10px]" onclick="startEditItem(${item.id})">✏️</button>
+                                <button class="btn-icon btn-delete text-xs sm:text-sm p-1.5 sm:p-[6px_10px]" onclick="deleteItem(${item.id})">🗑️</button>
                             </div>
                         </div>
 						
-                        <div class="progress-text mt-2 text-[0.95em] truncate">
+                        <div class="progress-text mt-1 sm:mt-2 text-[0.85em] sm:text-[0.95em] whitespace-normal">
                             Progress: ${item.current_progress} / ${displayTotal}
-                            ${item.status !== 'Completed' ? `<button class="btn-plus shadow-sm hover:scale-110 shrink-0" onclick="quickProgress(${item.id}, ${item.current_progress}, ${item.total_count})">+</button>` : ''}
+                            ${item.status !== 'Completed' ? `<button class="btn-plus shadow-sm hover:scale-110 shrink-0 inline-flex" onclick="quickProgress(${item.id}, ${item.current_progress}, ${item.total_count})">+</button>` : ''}
                         </div>
 						
-                        ${item.total_count > 0 ? `<div class="progress-container w-full"><div class="progress-bar" style="width: ${percent}%"></div></div>` : ''}
+                        ${item.total_count > 0 ? `<div class="progress-container w-full mt-1.5 sm:mt-2"><div class="progress-bar" style="width: ${percent}%"></div></div>` : ''}
 						
-                        ${item.review ? `<span class="item-review">" ${item.review} "</span>` : ''}
-                        <div class="text-[0.7em] opacity-50 mt-2 flex items-center gap-1 truncate">
+                        ${item.review ? `<span class="item-review text-sm">" ${item.review} "</span>` : ''}
+                        
+                        <div class="text-[0.7em] opacity-50 mt-1.5 sm:mt-2 flex items-center gap-1 whitespace-normal">
                             🕒 Last updated: ${item.updated_at || item.created_at || 'Unknown'}
                         </div>
                     </div>
