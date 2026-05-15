@@ -124,6 +124,7 @@ async function loadItems() {
     try {
         const response = await fetch(apiUrl);
         allItems = await response.json();
+        refreshCategoryDropdown(allItems);
         renderItems(allItems);
         updateDashboard(allItems);
     } catch (error) { console.error("Load Error:", error); }
@@ -244,7 +245,11 @@ function renderItems(items) {
     const groups = {};
     filtered.forEach(i => { if(!groups[i.category]) groups[i.category]=[]; groups[i.category].push(i); });
 
-    ['Game', 'Anime', 'Manga', 'Movie'].forEach(cat => {
+    // Extract unique categories dynamically from the database
+    const dynamicCategories = Object.keys(groups).sort();
+
+    // Render all categories found in the data
+    dynamicCategories.forEach(cat => {
         if (groups[cat]) {
             const sec = document.createElement('div');
             sec.innerHTML = `<h3 class="category-header">${cat}</h3>`;
@@ -418,6 +423,117 @@ function toggleTheme() {
     if (savedTheme === 'dark') { icon.textContent = '🌙'; } 
     else { icon.textContent = '☀️'; }
 })();
+
+// Function to handle adding a new category via prompt
+function addNewCategory() {
+    const select = document.getElementById('categoryInput');
+    const newCat = prompt("ตั้งชื่อหมวดหมู่ใหม่ (เช่น Series, Board Game):");
+
+    if (newCat && newCat.trim() !== "") {
+        const catName = newCat.trim();
+
+        let exists = false;
+        for (let i = 0; i < select.options.length; i++) {
+            if (select.options[i].value.toLowerCase() === catName.toLowerCase()) {
+                exists = true;
+                select.selectedIndex = i;
+                break;
+            }
+        }
+
+        if (!exists) {
+            const opt = document.createElement('option');
+            opt.value = catName;
+            opt.text = "🏷️ " + catName;
+
+            const addNewOptionIndex = select.options.length - 1;
+            select.insertBefore(opt, select.options[addNewOptionIndex]);
+
+            select.value = catName;
+        }
+    } else {
+        select.selectedIndex = 0;
+    }
+
+    updateCustomDropdownUI(select);
+    if (select.customDisplaySpan) {
+        select.customDisplaySpan.textContent = select.options[select.selectedIndex].text;
+    }
+}
+
+// Function to automatically add saved categories to the dropdown on page load
+function refreshCategoryDropdown(items) {
+    const select = document.getElementById('categoryInput');
+
+    // Find all unique categories currently saved in the database
+    const uniqueCategories = new Set();
+    items.forEach(item => {
+        if (item.category) uniqueCategories.add(item.category);
+    });
+
+    // หาตัวเลือก "ADD_NEW" ว่าอยู่ตรงไหน เพื่อที่เราจะได้แทรกหมวดหมู่ใหม่ไว้ข้างบนมัน
+    const addNewOption = Array.from(select.options).find(opt => opt.value === "ADD_NEW");
+
+    // Append missing categories to the dropdown
+    uniqueCategories.forEach(cat => {
+        let exists = false;
+        for (let i = 0; i < select.options.length; i++) {
+            if (select.options[i].value === cat) {
+                exists = true;
+                break;
+            }
+        }
+
+        if (!exists) {
+            const opt = document.createElement('option');
+            opt.value = cat;
+            opt.text = "🏷️ " + cat;
+
+            // แทรกหมวดหมู่ที่โหลดจาก DB ไว้ก่อนปุ่ม ADD_NEW
+            if (addNewOption) {
+                select.insertBefore(opt, addNewOption);
+            } else {
+                select.appendChild(opt);
+            }
+        }
+    });
+
+    // Rebuild the custom UI dropdown list
+    updateCustomDropdownUI(select);
+}
+
+// Helper function to rebuild the custom UI created by dropdown.js
+function updateCustomDropdownUI(select) {
+    const wrapper = select.parentNode;
+    const list = wrapper.querySelector('.custom-select-list');
+    const spanText = select.customDisplaySpan;
+
+    if (!list) return; // Exit if custom UI is not yet initialized
+
+    list.innerHTML = ''; // Clear old list
+
+    // Rebuild the custom list with the newly added options
+    Array.from(select.options).forEach((option, index) => {
+        const item = document.createElement("div");
+        item.className = "p-3 cursor-pointer hover:bg-accent hover:text-white dark:hover:bg-accentDark dark:hover:text-gray-900 transition-colors text-[0.95em] select-none";
+        item.textContent = option.text;
+
+        item.addEventListener("click", (e) => {
+            e.stopPropagation();
+            select.selectedIndex = index;
+            spanText.textContent = option.text;
+            list.classList.add("hidden");
+            select.dispatchEvent(new Event("change"));
+        });
+        list.appendChild(item);
+    });
+}
+
+function handleCategoryChange(selectElement) {
+    if (selectElement.value === "ADD_NEW") {
+        addNewCategory();
+    }
+}
 
 // Initialize app
 loadItems();
