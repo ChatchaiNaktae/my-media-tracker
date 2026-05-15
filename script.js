@@ -294,50 +294,50 @@ function renderItems(items) {
                 // Calculate percentage only if total_count is greater than 0
                 const percent = item.total_count > 0 ? (item.current_progress / item.total_count) * 100 : 0;
                 let linkHtml = item.link ? `<a href="${item.link}" target="_blank" class="item-link" title="Open Link">🔗</a>` : '';
-				
+
                 let tagsHtml = '';
                 if (item.tags) {
                     const tagArray = item.tags.split(',').map(t => t.trim()).filter(t => t);
                     tagsHtml = `<div class="flex flex-wrap gap-1 mt-1.5 mb-2">
-                        ${tagArray.map(tag => `<span class="bg-accent/10 dark:bg-accentDark/10 text-accent dark:text-accentDark text-[0.75em] px-2 py-0.5 rounded-md font-semibold border border-accent/20 dark:border-accentDark/20">${tag}</span>`).join('')}
+                        ${tagArray.map(tag => `<span class="bg-accent/10 dark:bg-accentDark/10 text-accent dark:text-accentDark text-[0.75em] px-2 py-0.5 rounded-md font-semibold border border-accent/20 dark:border-accentDark/20 truncate max-w-full">${tag}</span>`).join('')}
                     </div>`;
                 }
-				
-                let coverHtml = item.cover_image 
-                    ? `<img src="${item.cover_image}" class="w-[85px] h-[120px] object-cover rounded-lg shadow-md shrink-0 border border-gray-200 dark:border-zinc-700" alt="Cover">` 
+
+                let coverHtml = item.cover_image
+                    ? `<img src="${item.cover_image}" class="w-[85px] h-[120px] object-cover rounded-lg shadow-md shrink-0 border border-gray-200 dark:border-zinc-700" alt="Cover">`
                     : `<div class="w-[85px] h-[120px] bg-black/5 dark:bg-white/5 rounded-lg flex items-center justify-center shrink-0 text-3xl border border-dashed border-gray-300 dark:border-zinc-700">📸</div>`;
-				
-                // Check if the item is ongoing (total_count is 0) to change the display text
+
                 let displayTotal = item.total_count > 0 ? item.total_count : "? (Ongoing)";
-				
+
                 li.innerHTML = `
                     <input type="checkbox" data-id="${item.id}" onchange="handleCheckboxChange(this, ${item.id})" class="item-checkbox w-6 h-6 shrink-0 cursor-pointer accent-accent dark:accent-accentDark rounded-md">
                     ${coverHtml}
-                    <div class="item-info flex-1 min-w-0">
-                        <div class="flex justify-between items-start gap-2">
-                            <div class="flex-1 min-w-0">
-                                <div class="item-title text-[1.1em] leading-tight break-words">
+                    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+                        <div class="flex justify-between items-start gap-2 w-full min-w-0">
+                            <div class="flex-1 min-w-0 overflow-hidden">
+                                <div class="font-semibold text-[1.1em] leading-tight break-words">
                                     ${item.title} 
-                                    <span class="item-rating text-sm whitespace-nowrap">${'⭐'.repeat(item.rating)}</span>
+                                    <span class="text-yellow-400 text-sm whitespace-nowrap inline-block ml-1">${'⭐'.repeat(item.rating)}</span>
                                     ${linkHtml}
                                 </div>
                                 ${tagsHtml}
                             </div>
-                            <div class="actions shrink-0 flex gap-1.5">
+                            
+                            <div class="flex gap-1.5 shrink-0">
                                 <button class="btn-icon btn-edit text-sm p-[6px_10px]" onclick="startEditItem(${item.id})">✏️</button>
                                 <button class="btn-icon btn-delete text-sm p-[6px_10px]" onclick="deleteItem(${item.id})">🗑️</button>
                             </div>
                         </div>
 						
-                        <div class="progress-text mt-2 text-[0.95em]">
+                        <div class="progress-text mt-2 text-[0.95em] truncate">
                             Progress: ${item.current_progress} / ${displayTotal}
-                            ${item.status !== 'Completed' ? `<button class="btn-plus shadow-sm hover:scale-110" onclick="quickProgress(${item.id}, ${item.current_progress}, ${item.total_count})">+</button>` : ''}
+                            ${item.status !== 'Completed' ? `<button class="btn-plus shadow-sm hover:scale-110 shrink-0" onclick="quickProgress(${item.id}, ${item.current_progress}, ${item.total_count})">+</button>` : ''}
                         </div>
 						
-                        ${item.total_count > 0 ? `<div class="progress-container"><div class="progress-bar" style="width: ${percent}%"></div></div>` : ''}
+                        ${item.total_count > 0 ? `<div class="progress-container w-full"><div class="progress-bar" style="width: ${percent}%"></div></div>` : ''}
 						
                         ${item.review ? `<span class="item-review">" ${item.review} "</span>` : ''}
-                        <div class="text-[0.7em] opacity-50 mt-2 flex items-center gap-1">
+                        <div class="text-[0.7em] opacity-50 mt-2 flex items-center gap-1 truncate">
                             🕒 Last updated: ${item.updated_at || item.created_at || 'Unknown'}
                         </div>
                     </div>
