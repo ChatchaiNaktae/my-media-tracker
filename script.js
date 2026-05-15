@@ -535,6 +535,100 @@ function handleCategoryChange(selectElement) {
     }
 }
 
+// Function to export current data to a JSON file
+function exportData() {
+    if (allItems.length === 0) {
+        alert("ไม่มีข้อมูลให้สำรองครับ (No data to export)");
+        return;
+    }
+
+    // 1. Convert data to JSON string format with indentation (2 spaces)
+    const dataStr = JSON.stringify(allItems, null, 2);
+
+    // 2. Create a Blob (file-like object) from the JSON string
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    // 3. Create a temporary invisible link to trigger the download
+    const a = document.createElement('a');
+    a.href = url;
+
+    // Set file name dynamically using the current date (e.g., 2026-05-15)
+    const date = new Date().toISOString().split('T')[0];
+    a.download = `MediaTracker_Backup_${date}.json`;
+
+    // 4. Click the link programmatically and clean up memory
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// Function to import data from a JSON file using Upsert logic
+async function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        try {
+            // 1. Parse the uploaded JSON file
+            const importedItems = JSON.parse(e.target.result);
+
+            if (!Array.isArray(importedItems)) {
+                throw new Error("รูปแบบไฟล์ไม่ถูกต้อง ต้องเป็น Array (Invalid JSON array format)");
+            }
+
+            if (confirm(`พบข้อมูล ${importedItems.length} รายการ ต้องการนำเข้าหรือไม่?\n(ข้อมูลที่มี ID ซ้ำจะถูกอัปเดต ส่วนข้อมูลใหม่จะถูกเพิ่มเข้าไป)`)) {
+
+                // Show loading state on button to prevent multiple clicks
+                const label = event.target.parentElement;
+                const originalText = label.innerHTML;
+                label.innerHTML = "⏳ Loading...";
+                label.style.pointerEvents = "none"; // Disable clicks
+
+                // 2. Loop through imported items and process them (Upsert logic)
+                for (const item of importedItems) {
+                    // Check if item already exists in our current data array
+                    const exists = allItems.find(x => x.id === item.id);
+
+                    if (exists) {
+                        // If exists, Update it using PUT
+                        await fetch(`${apiUrl}/${item.id}`, {
+                            method: 'PUT',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify(item)
+                        });
+                    } else {
+                        // If not exists, Add new using POST
+                        await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify(item)
+                        });
+                    }
+                }
+
+                // Restore button UI
+                label.innerHTML = originalText;
+                label.style.pointerEvents = "auto";
+
+                alert("✅ นำเข้าข้อมูลเสร็จสิ้น! (Import completed!)");
+                loadItems(); // Refresh the display
+            }
+        } catch (error) {
+            alert("❌ ไฟล์ไม่ถูกต้อง หรือเกิดข้อผิดพลาดในการอ่านข้อมูล (Invalid file or read error)");
+            console.error("Import Error:", error);
+        }
+    };
+
+    // Read the selected file as text
+    reader.readAsText(file);
+
+    // Reset file input so the exact same file can be selected again if needed
+    event.target.value = '';
+}
+
 // Initialize app
 loadItems();
 updateUndoRedoUI(); // ล็อกปุ่มไว้ตั้งแต่เริ่ม
