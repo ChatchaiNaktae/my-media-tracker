@@ -1,7 +1,7 @@
 {
   "name": "My Media Tracker",
   "short_name": "MediaTracker",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#bb86fc",
