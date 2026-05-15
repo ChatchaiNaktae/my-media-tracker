@@ -358,6 +358,17 @@ async function handleFormSubmit() {
         setTimeout(() => titleInput.classList.remove('animate-shake'), 400);
         return;
     }
+
+    const isDuplicate = allItems.some(item =>
+        item.title.toLowerCase() === title.toLowerCase() &&
+        (!isEditing || item.id !== parseInt(document.getElementById('editId').value))
+    );
+
+    if (isDuplicate) {
+        alert(`⚠️ ปฏิเสธการบันทึก: ชื่อเรื่อง "${title}" มีอยู่ในลิสต์เรียบร้อยแล้วครับ!`);
+        titleInput.focus();
+        return;
+    }
     
     const data = {
         title,
@@ -720,28 +731,10 @@ document.getElementById('coverPreview').addEventListener('error', function() {
     this.classList.add('hidden');
 });
 
-// Function to handle title input: clear errors and check for duplicates
-function handleTitleInput(element) {
+// Function to clear error styling when user starts typing
+function clearTitleError(element) {
     element.classList.remove('input-error');
     element.placeholder = "ชื่อเรื่อง (Title)";
-
-    const val = element.value.trim().toLowerCase();
-    const warning = document.getElementById('duplicateWarning');
-
-    if (val === "") {
-        warning.classList.add('hidden');
-        return;
-    }
-
-    const isDuplicate = allItems.some(item =>
-        item.title.toLowerCase() === val && (!isEditing || item.id !== parseInt(document.getElementById('editId').value))
-    );
-
-    if (isDuplicate) {
-        warning.classList.remove('hidden');
-    } else {
-        warning.classList.add('hidden');
-    }
 }
 
 window.onscroll = function() {
