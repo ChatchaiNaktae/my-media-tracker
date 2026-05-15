@@ -5,7 +5,10 @@ const apiUrl = 'https://my-media-tracker-api.onrender.com/items';
 let allItems = [];
 let currentFilter = 'All';
 let isEditing = false;
-let selectedItems = new Set(); 
+let selectedItems = new Set();
+
+let currentPage = 1;
+const itemsPerPage = 15;
 
 // 🔥 ระบบความจำสำหรับ Undo/Redo
 let undoStack = [];
@@ -21,6 +24,8 @@ function saveAction(action) {
 function updateUndoRedoUI() {
     const undoBtn = document.getElementById('undoBtn');
     const redoBtn = document.getElementById('redoBtn');
+
+    if (!undoBtn || !redoBtn) return;
     
     // จัดการหน้าตาปุ่ม Undo
     if(undoStack.length > 0) {
@@ -242,10 +247,11 @@ function renderItems(items) {
         return b.id - a.id;
     });
 
-    const groups = {};
-    filtered.forEach(i => { if(!groups[i.category]) groups[i.category]=[]; groups[i.category].push(i); });
+    const totalFiltered = filtered.length;
+    const paginatedItems = filtered.slice(0, currentPage * itemsPerPage);
 
-    // Extract unique categories dynamically from the database
+    const groups = {};
+    paginatedItems.forEach(i => { if(!groups[i.category]) groups[i.category]=[]; groups[i.category].push(i); });
     const dynamicCategories = Object.keys(groups).sort();
 
     // Render all categories found in the data
@@ -316,14 +322,29 @@ function renderItems(items) {
             listContainer.appendChild(sec);
         }
     });
+
+    const loadMoreContainer = document.getElementById('loadMoreContainer');
+    if (loadMoreContainer) {
+        if (currentPage * itemsPerPage < totalFiltered) {
+            loadMoreContainer.classList.remove('hidden');
+        } else {
+            loadMoreContainer.classList.add('hidden');
+        }
+    }
 }
 
-function setFilter(event, f) { 
-    if (event) event.preventDefault(); 
-    currentFilter = f; 
+function loadMoreItems() {
+    currentPage++;
+    renderItems(allItems);
+}
+
+function setFilter(event, f) {
+    if (event) event.preventDefault();
+    currentFilter = f;
+    currentPage = 1;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     event.target.classList.add('active');
-    renderItems(allItems); 
+    renderItems(allItems);
 }
 
 // Handle Form Submission
@@ -403,8 +424,8 @@ async function deleteItem(id) {
     }
 }
 
-function handleSearch() { renderItems(allItems); }
-function handleSort() { renderItems(allItems); }
+function handleSearch() { currentPage = 1; renderItems(allItems); }
+function handleSort() { currentPage = 1; renderItems(allItems); }
 
 // Theme Toggle System
 function toggleTheme() {
