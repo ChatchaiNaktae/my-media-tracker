@@ -806,6 +806,55 @@ function updateCharts(items) {
     });
 }
 
+// Auto-fill System (Jikan API)
+async function fetchMediaData() {
+    const title = document.getElementById('titleInput').value.trim();
+    const btn = document.getElementById('autofillBtn');
+
+    if (!title) {
+        alert("⚠️ โปรดระบุชื่อเรื่องที่ต้องการค้นหาก่อนครับ!");
+        return;
+    }
+
+    const originalText = btn.innerHTML;
+    btn.innerHTML = "⏳ กำลังหา...";
+    btn.disabled = true;
+
+    try {
+        const response = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(title)}&limit=1`);
+        const result = await response.json();
+
+        if (result.data && result.data.length > 0) {
+            const data = result.data[0];
+            document.getElementById('titleInput').value = data.title;
+
+            document.getElementById('coverInput').value = data.images.jpg.large_image_url;
+            previewCoverImage();
+
+            document.getElementById('totalCountInput').value = data.episodes || 0;
+
+            if (data.type === 'TV' || data.type === 'Movie' || data.type === 'OVA') {
+                document.getElementById('categoryInput').value = 'Anime';
+            }
+
+            const genres = data.genres.map(g => g.name).join(', ');
+            document.getElementById('tagsInput').value = genres;
+
+            if (window.refreshCategoryDropdown) refreshCategoryDropdown(allItems);
+
+            alert(`✅ ดึงข้อมูลเรื่อง "${data.title}" สำเร็จ!`);
+        } else {
+            alert("❌ ไม่พบข้อมูลเรื่องนี้ในฐานข้อมูลครับ");
+        }
+    } catch (error) {
+        console.error("Autofill Error:", error);
+        alert("❌ เกิดข้อผิดพลาดในการเชื่อมต่อกับ API ครับ");
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
 // Initialize app
 loadItems();
 updateUndoRedoUI(); // ล็อกปุ่มไว้ตั้งแต่เริ่ม
