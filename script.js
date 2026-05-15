@@ -720,10 +720,45 @@ document.getElementById('coverPreview').addEventListener('error', function() {
     this.classList.add('hidden');
 });
 
-// Function to clear error styling when user starts typing
-function clearTitleError(element) {
+// Function to handle title input: clear errors and check for duplicates
+function handleTitleInput(element) {
     element.classList.remove('input-error');
     element.placeholder = "ชื่อเรื่อง (Title)";
+
+    const val = element.value.trim().toLowerCase();
+    const warning = document.getElementById('duplicateWarning');
+
+    if (val === "") {
+        warning.classList.add('hidden');
+        return;
+    }
+
+    const isDuplicate = allItems.some(item =>
+        item.title.toLowerCase() === val && (!isEditing || item.id !== parseInt(document.getElementById('editId').value))
+    );
+
+    if (isDuplicate) {
+        warning.classList.remove('hidden');
+    } else {
+        warning.classList.add('hidden');
+    }
+}
+
+window.onscroll = function() {
+    const btn = document.getElementById('scrollToTopBtn');
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        // ถ้าเลื่อนลงมาเกิน 300px ให้โชว์ปุ่ม
+        btn.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
+        btn.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+    } else {
+        // ถ้าอยู่ใกล้ขอบบน ให้ซ่อนปุ่ม
+        btn.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+        btn.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+    }
+};
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // Initialize app
