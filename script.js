@@ -82,29 +82,57 @@ async function triggerRedo() {
 
 async function revertAction(action, isUndo) {
     if (action.type === 'add') {
-        // ถ้า Undo การ Add = ลบทิ้ง / ถ้า Redo = สร้างใหม่
-        if (isUndo) await fetch(`${apiUrl}/${action.item.id}`, { method: 'DELETE' });
-        else await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(action.item) });
-    } 
+        if (isUndo) {
+            await fetch(`${apiUrl}/${action.item.id}`, {
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+        } else {
+            await fetch(apiUrl, {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify(action.item)
+            });
+        }
+    }
     else if (action.type === 'edit') {
-        // ดึงข้อมูลเก่าหรือใหม่ไปทับ
         const payload = isUndo ? action.oldItem : action.newItem;
-        await fetch(`${apiUrl}/${payload.id}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+        await fetch(`${apiUrl}/${payload.id}`, {
+            method: 'PUT',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(payload)
+        });
     }
     else if (action.type === 'delete') {
-        // ถ้า Undo การลบ = สร้างกลับมา / ถ้า Redo = ลบทิ้งอีกรอบ
-        if (isUndo) await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(action.item) });
-        else await fetch(`${apiUrl}/${action.item.id}`, { method: 'DELETE' });
+        if (isUndo) {
+            await fetch(apiUrl, {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify(action.item)
+            });
+        } else {
+            await fetch(`${apiUrl}/${action.item.id}`, {
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+        }
     }
     else if (action.type === 'batch_delete') {
-        // การจัดการลบแบบกลุ่ม
         if (isUndo) {
             for (let item of action.items) {
-                await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(item) });
+                await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(item)
+                });
             }
         } else {
             const ids = action.items.map(i => i.id);
-            await fetch(`${apiUrl}/batch-delete`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ ids }) });
+            await fetch(`${apiUrl}/batch-delete`, {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({ ids })
+            });
         }
     }
 }
@@ -129,10 +157,10 @@ async function quickProgress(id, current, total) {
     
     const oldItem = allItems.find(x => x.id === id);
     const newItem = { ...oldItem, current_progress: current + 1 };
-    
+
     await fetch(`${apiUrl}/${id}`, {
         method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
+        headers: getAuthHeaders(),
         body: JSON.stringify({ current_progress: current + 1 })
     });
     
@@ -145,7 +173,7 @@ async function loadItems() {
     showSkeleton();
 
     try {
-        const response = await fetch(apiUrl);
+        const response = await fetch(apiUrl, { headers: getAuthHeaders() });
         allItems = await response.json();
         refreshCategoryDropdown(allItems);
         renderItems(allItems);
@@ -227,10 +255,10 @@ async function deleteSelectedItems() {
     if (selectedItems.size === 0) return;
     if (confirm(`คุณต้องการลบ ${selectedItems.size} รายการที่เลือกใช่หรือไม่?\n(ลบแล้วกู้คืนไม่ได้นะ)`)) {
         const deletedItems = allItems.filter(x => selectedItems.has(x.id)); // จำของที่จะลบก่อน
-        
+
         await fetch(`${apiUrl}/batch-delete`, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: getAuthHeaders(),
             body: JSON.stringify({ ids: Array.from(selectedItems) })
         });
         
@@ -416,10 +444,10 @@ async function handleFormSubmit() {
     if (isEditing) {
         const oldItem = allItems.find(x => x.id == id);
         data.id = parseInt(id); // แปะ ID เข้าไปด้วยเพื่อความสมบูรณ์
-        await fetch(`${apiUrl}/${id}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
+        await fetch(`${apiUrl}/${id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) });
         saveAction({ type: 'edit', oldItem: oldItem, newItem: data }); // บันทึกความจำ
     } else {
-        const response = await fetch(apiUrl, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
+        const response = await fetch(apiUrl, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
         const resData = await response.json();
         data.id = resData.id;
         saveAction({ type: 'add', item: data }); // บันทึกความจำ
@@ -464,7 +492,7 @@ function cancelEdit() {
 async function deleteItem(id) {
     if(confirm("ลบรายการนี้ใช่ไหม? ข้อมูลจะไม่สามารถกู้คืนได้")) { 
         const deletedItem = allItems.find(x => x.id === id);
-        await fetch(`${apiUrl}/${id}`, { method: 'DELETE' }); 
+        await fetch(`${apiUrl}/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
         saveAction({ type: 'delete', item: deletedItem }); // บันทึกความจำ
         loadItems(); 
     }
@@ -706,14 +734,14 @@ async function importData(event) {
                         // If exists, Update it using PUT
                         await fetch(`${apiUrl}/${item.id}`, {
                             method: 'PUT',
-                            headers: {'Content-Type': 'application/json'},
+                            headers: getAuthHeaders(),
                             body: JSON.stringify(item)
                         });
                     } else {
                         // If not exists, Add new using POST
                         await fetch(apiUrl, {
                             method: 'POST',
-                            headers: {'Content-Type': 'application/json'},
+                            headers: getAuthHeaders(),
                             body: JSON.stringify(item)
                         });
                     }
