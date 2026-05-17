@@ -1,4 +1,4 @@
-const CACHE_NAME = 'media-tracker-v4';
+const CACHE_NAME = 'media-tracker-v5';
 const urlsToCache = [
     './',
     './index.html',
