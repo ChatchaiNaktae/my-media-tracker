@@ -1032,15 +1032,15 @@ async function handleLogin() {
     }
 }
 
-// Function to toggle password visibility
+// Function to toggle password visibility with Font Awesome
 function togglePassword(inputId, btn) {
     const input = document.getElementById(inputId);
     if (input.type === 'password') {
         input.type = 'text';
-        btn.innerHTML = '🙈';
+        btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
     } else {
         input.type = 'password';
-        btn.innerHTML = '👁️';
+        btn.innerHTML = '<i class="fa-solid fa-eye"></i>';
     }
 }
 
