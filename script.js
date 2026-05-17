@@ -1032,6 +1032,18 @@ async function handleLogin() {
     }
 }
 
+// Function to toggle password visibility
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerHTML = '🙈';
+    } else {
+        input.type = 'password';
+        btn.innerHTML = '👁️';
+    }
+}
+
 function handleLogout() {
     if (confirm("ต้องการออกจากระบบใช่หรือไม่?")) {
         localStorage.removeItem('access_token');
