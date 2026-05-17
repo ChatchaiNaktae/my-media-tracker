@@ -1,4 +1,4 @@
-const CACHE_NAME = 'media-tracker-v3';
+const CACHE_NAME = 'media-tracker-v4';
 const urlsToCache = [
     './',
     './index.html',
@@ -6,7 +6,11 @@ const urlsToCache = [
     './script.js',
     './dropdown.js',
     './manifest.json',
-    './Assets/Images/favicon.ico'
+    './Assets/Images/favicon.ico',
+    './Assets/Images/icon-192.png',
+    './Assets/Images/icon-512.png',
+    './Assets/Images/screenshot-mobile.png',
+    './Assets/Images/screenshot-desktop.png'
 ];
 
 self.addEventListener('install', event => {
