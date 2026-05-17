@@ -1143,6 +1143,34 @@ async function handleRegister(event) {
     }
 }
 
+// PWA Custom Install Prompt System
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+
+    const installBtn = document.getElementById('installAppBtn');
+    if (installBtn) {
+        installBtn.classList.remove('hidden');
+    }
+});
+
+document.getElementById('installAppBtn')?.addEventListener('click', async () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            showToast('ผู้ใช้กดติดตั้งแอปเรียบร้อย', 'success');
+        } else {
+            showToast('ผู้ใช้กดยกเลิกการติดตั้ง', 'error');
+        }
+
+        deferredPrompt = null;
+        document.getElementById('installAppBtn').classList.add('hidden');
+    }
+});
+
 // Initialize app
 checkAuth();
 updateUndoRedoUI();
