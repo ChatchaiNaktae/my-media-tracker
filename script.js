@@ -17,6 +17,17 @@ let redoStack = [];
 
 let mediaChart = null;
 
+function getMasterKey() {
+    let key = localStorage.getItem('mt_master_key');
+    if (!key) {
+        key = prompt("🔒 ระบบรักษาความปลอดภัย: กรุณาใส่รหัส Master Key ผู้ดูแลระบบเพื่อยืนยันสิทธิ์ในการสมัครสมาชิก");
+        if (key) {
+            localStorage.setItem('mt_master_key', key);
+        }
+    }
+    return key;
+}
+
 function saveAction(action) {
     undoStack.push(action);
     if (undoStack.length > 30) undoStack.shift(); // จำย้อนหลังได้สูงสุด 30 รายการล่าสุด
@@ -1093,40 +1104,53 @@ function toggleAuthView(view) {
     }
 }
 
-async function handleRegister(event) {
-    const username = document.getElementById('regUsernameInput').value.trim();
-    const password = document.getElementById('regPasswordInput').value;
+async function handleRegister(e) {
+    e.preventDefault();
+    const user = document.getElementById('regUsernameInput').value.trim();
+    const pass = document.getElementById('regPasswordInput').value;
     const confirmPass = document.getElementById('regConfirmPassword').value;
-
-    if (!username || !password) {
-        showToast("⚠️ โปรดกรอกข้อมูลให้ครบถ้วน", 'warning');
+	
+    if (!user || !pass || !confirmPass) {
+        showToast("❌ กรุณากรอกข้อมูลให้ครบถ้วน!", 'error');
         return;
     }
-    if (password !== confirmPass) {
-        showToast("❌ รหัสผ่านไม่ตรงกัน โปรดลองใหม่", 'error');
+	
+    if (pass !== confirmPass) {
+        showToast("❌ รหัสผ่านไม่ตรงกัน!", 'error');
         return;
     }
-
-    const btn = event.target;
+	
+    const masterKey = getMasterKey();
+    if (!masterKey) {
+        showToast("❌ ยกเลิกการสมัคร: จำเป็นต้องใช้ Master Key", 'error');
+        return;
+    }
+	
+    const btn = document.getElementById('regBtn');
     const originalText = btn.innerHTML;
-    btn.innerHTML = "⏳ Registering...";
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังสมัคร...';
     btn.disabled = true;
-
+	
     try {
-        const response = await fetch(`${apiUrl.replace('/items', '')}/register`, {
+        const response = await fetch(apiUrl.replace('/items', '/register'), {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ username, password })
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-API-Key': masterKey // 🔑 แนบกุญแจไปกับ Headers เพื่อตรวจสอบ
+            },
+            body: JSON.stringify({ username: user, password: pass })
         });
-
+		
+        if (response.status === 401) {
+            localStorage.removeItem('mt_master_key');
+            showToast("❌ Master Key ไม่ถูกต้อง!", 'error');
+            return;
+        }
+		
         if (response.ok) {
-            showToast("✅ สมัครสมาชิกสำเร็จ! โปรดล็อกอิน", 'success');
-
-            toggleAuthView('login');
-
-            document.getElementById('usernameInput').value = username;
-            document.getElementById('passwordInput').value = '';
-
+            showToast("✅ สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ", 'success');
+            toggleAuthMode();
+			
             document.getElementById('regUsernameInput').value = '';
             document.getElementById('regPasswordInput').value = '';
             document.getElementById('regConfirmPassword').value = '';

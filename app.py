@@ -35,11 +35,17 @@ if collection.count_documents({}) == 0:
 
 @app.route('/register', methods=['POST'])
 def register():
+    client_key = request.headers.get('X-API-Key')
+    secret_api_key = os.getenv("MASTER_API_KEY", "ChatchaiSecret123")
+    
+    if client_key != secret_api_key:
+        return jsonify({"message": "Unauthorized: Master Key สำหรับสมัครสมาชิกไม่ถูกต้อง!"}), 401
+    
     data = request.get_json()
     if users_coll.find_one({"username": data['username']}):
-        return jsonify({"message": "Username already exists"}), 400
-
-    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+        return jsonify({"message": "Username already exists!"}), 400
+    
+    hashed_pw = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     users_coll.insert_one({"username": data['username'], "password": hashed_password})
     return jsonify({"message": "User registered successfully"}), 201
 
