@@ -204,6 +204,9 @@
                             <option value="ADD_NEW" class="text-accent dark:text-accentDark font-bold bg-black/5 dark:bg-white/5">
                                 ➕ เพิ่มหมวดหมู่ใหม่...
                             </option>
+                            <option value="MANAGE_CATEGORIES" class="text-orange-500 font-bold bg-black/5 dark:bg-white/5">
+                                ⚙️ จัดการหมวดหมู่ของฉัน...
+                            </option>
                         </select>
 
                         <select id="statusInput" class="modal-select">
@@ -422,6 +425,18 @@
         </svg>
     </button>
 
+    <div id="manageCategoryModal" class="fixed inset-0 z-[6000] hidden flex items-center justify-center p-4 sm:p-6 bg-black/80 transition-opacity duration-200">
+        <div class="w-full max-w-[400px] bg-containerLight dark:bg-zinc-900 rounded-3xl p-5 sm:p-7 shadow-2xl relative animate-[modalPop_.18s_ease] border border-gray-200 dark:border-zinc-800">
+            <h3 class="text-xl font-bold mb-4 text-gray-800 dark:text-white flex items-center gap-2">
+                ⚙️ จัดการหมวดหมู่ของฉัน
+            </h3>
+            <div id="customCategoryList" class="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar pr-2 mb-5">
+                </div>
+            <button onclick="closeManageCategoryModal()" class="w-full py-3 rounded-xl bg-gray-200 dark:bg-zinc-800 hover:bg-gray-300 dark:hover:bg-zinc-700 text-gray-800 dark:text-white font-semibold transition-colors duration-200">
+                ปิดหน้าต่าง
+            </button>
+        </div>
+    </div>
     <div id="toastContainer" class="fixed top-5 right-5 z-[99999] flex flex-col gap-3 pointer-events-none"></div>
 </body>
 

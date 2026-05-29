@@ -698,6 +698,13 @@ function updateCustomDropdownUI(select) {
 function handleCategoryChange(selectElement) {
     if (selectElement.value === "ADD_NEW") {
         addNewCategory();
+    } else if (selectElement.value === "MANAGE_CATEGORIES") {
+        openManageCategoryModal();
+        selectElement.selectedIndex = 0;
+        updateCustomDropdownUI(selectElement);
+        if (selectElement.customDisplaySpan) {
+            selectElement.customDisplaySpan.textContent = selectElement.options[0].text;
+        }
     }
 }
 
@@ -1245,6 +1252,88 @@ document.getElementById('installAppBtn')?.addEventListener('click', async () => 
         document.getElementById('installAppBtn').classList.add('hidden');
     }
 });
+
+// Manage Custom Categories
+function openManageCategoryModal() {
+    renderManageCategories();
+    document.getElementById('manageCategoryModal').classList.remove('hidden');
+}
+
+function closeManageCategoryModal() {
+    document.getElementById('manageCategoryModal').classList.add('hidden');
+    refreshCategoryDropdown(allItems);
+}
+
+function renderManageCategories() {
+    const list = document.getElementById('customCategoryList');
+    let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
+    const catNames = Object.keys(savedCustomCats);
+
+    if (catNames.length === 0) {
+        list.innerHTML = '<p class="text-center text-gray-500 dark:text-zinc-500 py-6 font-semibold">คุณยังไม่ได้สร้างหมวดหมู่ของตัวเองครับ</p>';
+        return;
+    }
+
+    list.innerHTML = catNames.map(cat => `
+        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700">
+            <span class="font-semibold text-gray-800 dark:text-gray-200">${savedCustomCats[cat]} ${cat}</span>
+            <div class="flex gap-1.5">
+                <button onclick="editCustomCategory('${cat}')" class="w-8 h-8 flex items-center justify-center bg-yellow-400 text-gray-900 rounded-lg hover:scale-105 transition-transform shadow-sm" title="แก้ไข">✏️</button>
+                <button onclick="deleteCustomCategory('${cat}')" class="w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-lg hover:scale-105 transition-transform shadow-sm" title="ลบ">🗑️</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function editCustomCategory(oldName) {
+    let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
+    let oldEmoji = savedCustomCats[oldName];
+
+    const newName = prompt(`แก้ไขชื่อหมวดหมู่ "${oldName}":`, oldName);
+    if (!newName || newName.trim() === "" || newName === oldName && newEmoji === oldEmoji) {
+        // ถ้าไม่เปลี่ยนชื่อ ขอเช็คอีโมจิต่อ
+    }
+    
+    const finalName = (newName && newName.trim() !== "") ? newName.trim() : oldName;
+    const newEmoji = prompt(`แก้ไขอีโมจิสำหรับ "${finalName}":`, oldEmoji);
+    const finalEmoji = (!newEmoji || newEmoji.trim() === "") ? "🏷️" : newEmoji.trim();
+
+    if (finalName === oldName && finalEmoji === oldEmoji) return;
+
+    delete savedCustomCats[oldName];
+    savedCustomCats[finalName] = finalEmoji;
+    localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
+
+    const itemsToUpdate = allItems.filter(item => item.category === oldName);
+    if (itemsToUpdate.length > 0) {
+        if (confirm(`พบข้อมูล ${itemsToUpdate.length} รายการที่ใช้หมวดหมู่ "${oldName}"\nต้องการอัปเดตชื่อหมวดหมู่ในข้อมูลเหล่านั้นให้เป็น "${finalName}" ด้วยหรือไม่?`)) {
+            showToast("⏳ กำลังอัปเดตข้อมูล...", 'info');
+            for (let item of itemsToUpdate) {
+                item.category = finalName;
+                await fetch(`${apiUrl}/${item.id}`, {
+                    method: 'PUT',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(item)
+                });
+            }
+            showToast("✅ อัปเดตข้อมูลสำเร็จ!", 'success');
+            loadItems(); 
+        }
+    }
+
+    renderManageCategories();
+}
+
+function deleteCustomCategory(catName) {
+    if (confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบหมวดหมู่ "${catName}"?\n\n(หมวดหมู่นี้จะหายไปจากตัวเลือก แต่ข้อมูลเรื่องเก่าๆ ที่เคยใช้หมวดหมู่นี้จะยังคงอยู่)`)) {
+        let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
+        delete savedCustomCats[catName]; // ลบทิ้งจากเครื่อง
+        localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
+        
+        showToast(`✅ ลบหมวดหมู่ "${catName}" เรียบร้อย`, 'success');
+        renderManageCategories();
+    }
+}
 
 // Initialize app
 checkAuth();
