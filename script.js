@@ -1290,13 +1290,16 @@ async function editCustomCategory(oldName) {
     let oldEmoji = savedCustomCats[oldName];
 
     const newName = prompt(`แก้ไขชื่อหมวดหมู่ "${oldName}":`, oldName);
-    if (!newName || newName.trim() === "" || newName === oldName && newEmoji === oldEmoji) {
-        // ถ้าไม่เปลี่ยนชื่อ ขอเช็คอีโมจิต่อ
-    }
     
-    const finalName = (newName && newName.trim() !== "") ? newName.trim() : oldName;
+    if (newName === null) return; 
+    
+    const finalName = (newName.trim() !== "") ? newName.trim() : oldName;
+    
     const newEmoji = prompt(`แก้ไขอีโมจิสำหรับ "${finalName}":`, oldEmoji);
-    const finalEmoji = (!newEmoji || newEmoji.trim() === "") ? "🏷️" : newEmoji.trim();
+    
+    if (newEmoji === null) return;
+    
+    const finalEmoji = (newEmoji.trim() !== "") ? newEmoji.trim() : "🏷️";
 
     if (finalName === oldName && finalEmoji === oldEmoji) return;
 
@@ -1327,7 +1330,7 @@ async function editCustomCategory(oldName) {
 function deleteCustomCategory(catName) {
     if (confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบหมวดหมู่ "${catName}"?\n\n(หมวดหมู่นี้จะหายไปจากตัวเลือก แต่ข้อมูลเรื่องเก่าๆ ที่เคยใช้หมวดหมู่นี้จะยังคงอยู่)`)) {
         let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
-        delete savedCustomCats[catName]; // ลบทิ้งจากเครื่อง
+        delete savedCustomCats[catName];
         localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
         
         showToast(`✅ ลบหมวดหมู่ "${catName}" เรียบร้อย`, 'success');
