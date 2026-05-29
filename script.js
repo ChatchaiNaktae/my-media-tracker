@@ -1,4 +1,4 @@
-/* script.js - Updated with FULL Undo/Redo Memory Stack */
+/* script.js - Updated with FULL Undo/Redo Memory Stack & Theme Fix */
 
 // const apiUrl = 'http://127.0.0.1:5000/items';
 const apiUrl = 'https://my-media-tracker-api.onrender.com/items';
@@ -158,9 +158,6 @@ async function revertAction(action, isUndo) {
     }
 }
 // -------------------------------------------------------------
-
-// Heartbeat
-// setInterval(() => { fetch('http://127.0.0.1:5000/heartbeat', { method: 'POST' }).catch(err => {}); }, 1000);
 
 // Get acronym for Smart Search
 function getAcronym(title) {
@@ -385,14 +382,14 @@ function renderItems(items) {
                                 <button class="btn-icon btn-delete text-xs sm:text-sm p-1.5 sm:p-[6px_10px]" onclick="deleteItem(${item.id})">🗑️</button>
                             </div>
                         </div>
-						
+                        
                         <div class="progress-text mt-1 sm:mt-2 text-[0.85em] sm:text-[0.95em] whitespace-normal">
                             Progress: ${item.current_progress} / ${displayTotal}
                             ${item.status !== 'Completed' ? `<button class="btn-plus shadow-sm hover:scale-110 shrink-0 inline-flex" onclick="quickProgress(${item.id}, ${item.current_progress}, ${item.total_count})">+</button>` : ''}
                         </div>
-						
+                        
                         ${item.total_count > 0 ? `<div class="progress-container w-full mt-1.5 sm:mt-2"><div class="progress-bar" style="width: ${percent}%"></div></div>` : ''}
-						
+                        
                         ${item.review ? `<span class="item-review text-sm">" ${item.review} "</span>` : ''}
                         
                         <div class="text-[0.7em] opacity-50 mt-1.5 sm:mt-2 flex items-center gap-1 whitespace-normal">
@@ -438,7 +435,7 @@ async function handleFormSubmit() {
     const title = titleInput.value.trim();
 
     if(!title) {
-        titleInput.classList.add('input-error', 'animate-shake'); // สั่งให้ขอบแดงและสั่น
+        titleInput.classList.add('input-error', 'animate-shake'); 
         titleInput.placeholder = "⚠️ กรุณาใส่ชื่อเรื่องก่อนบันทึก!";
         setTimeout(() => titleInput.classList.remove('animate-shake'), 400);
         return;
@@ -472,14 +469,14 @@ async function handleFormSubmit() {
     
     if (isEditing) {
         const oldItem = allItems.find(x => x.id == id);
-        data.id = parseInt(id); // แปะ ID เข้าไปด้วยเพื่อความสมบูรณ์
+        data.id = parseInt(id);
         await fetch(`${apiUrl}/${id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(data) });
-        saveAction({ type: 'edit', oldItem: oldItem, newItem: data }); // บันทึกความจำ
+        saveAction({ type: 'edit', oldItem: oldItem, newItem: data });
     } else {
         const response = await fetch(apiUrl, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
         const resData = await response.json();
         data.id = resData.id;
-        saveAction({ type: 'add', item: data }); // บันทึกความจำ
+        saveAction({ type: 'add', item: data }); 
     }
     
     cancelEdit(); 
@@ -525,14 +522,14 @@ async function deleteItem(id) {
     if(confirm("ลบรายการนี้ใช่ไหม? ข้อมูลจะไม่สามารถกู้คืนได้")) { 
         const deletedItem = allItems.find(x => x.id === id);
         await fetch(`${apiUrl}/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
-        saveAction({ type: 'delete', item: deletedItem }); // บันทึกความจำ
+        saveAction({ type: 'delete', item: deletedItem });
         loadItems(); 
     }
 }
 
 let searchTimeout;
 function handleSearch() {
-    clearTimeout(searchTimeout); // ถ้านิ้วยังพิมพ์อยู่ ให้ยกเลิกการค้นหารอบที่แล้วทิ้งไป
+    clearTimeout(searchTimeout); 
     searchTimeout = setTimeout(() => {
         currentPage = 1;
         renderItems(allItems);
@@ -552,7 +549,13 @@ function toggleTheme() {
     btn.classList.add('rotate-anim');
     setTimeout(() => { btn.classList.remove('rotate-anim'); }, 500);
 
-    updateCharts(allItems); 
+    // 🌟 แก้ไข: สั่งให้ Chart.js อัปเดตสีตัวอักษรทันที
+    if (mediaChart) {
+        mediaChart.options.plugins.legend.labels.color = isDark ? '#ffffff' : '#333333';
+        mediaChart.update();
+    } else {
+        updateCharts(allItems); 
+    }
 }
 
 (function initTheme() {
@@ -580,10 +583,8 @@ function addNewCategory() {
         }
 
         if (!exists) {
-            // 🌟 เพิ่ม Prompt หน้าต่างที่ 2 สำหรับขออีโมจิ
             let emoji = prompt(`ใส่อีโมจิสำหรับหมวดหมู่ "${catName}" (เช่น 🤖, 📖, 🎲)\n*ถ้าไม่ใส่ ระบบจะใช้ 🏷️ ให้แทน*`);
 
-            // เช็คว่าถ้ากดยกเลิก หรือไม่พิมพ์อะไรเลย ให้ใช้ 🏷️
             if (!emoji || emoji.trim() === "") {
                 emoji = "🏷️";
             } else {
@@ -592,23 +593,21 @@ function addNewCategory() {
 
             const opt = document.createElement('option');
             opt.value = catName;
-            opt.text = emoji + " " + catName; // เอาอีโมจิมาต่อหน้าชื่อ
+            opt.text = emoji + " " + catName; 
 
             const addNewOptionIndex = select.options.length - 1;
             select.insertBefore(opt, select.options[addNewOptionIndex]);
             select.value = catName;
 
-            // 🌟 Save to LocalStorage แบบ Object (เก็บชื่อคู่กับอีโมจิ)
             let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
 
-            // ตัวกันเหนียว: เผื่อระบบเดิมของคุณเซฟเป็น Array ไว้ ให้แปลงเป็น Object ก่อน ป้องกันบัค
             if (Array.isArray(savedCustomCats)) {
                 const tempObj = {};
                 savedCustomCats.forEach(c => tempObj[c] = "🏷️");
                 savedCustomCats = tempObj;
             }
 
-            savedCustomCats[catName] = emoji; // บันทึกข้อมูล เช่น {"Series": "🎞️"}
+            savedCustomCats[catName] = emoji; 
             localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
         }
     } else {
@@ -630,10 +629,8 @@ function refreshCategoryDropdown(items) {
         if (item.category) uniqueCategories.add(item.category);
     });
 
-    // Load custom categories from LocalStorage
     let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
 
-    // ตัวกันเหนียว: เผื่อระบบเดิมเซฟเป็น Array ไว้
     if (Array.isArray(savedCustomCats)) {
         const tempObj = {};
         savedCustomCats.forEach(c => tempObj[c] = "🏷️");
@@ -641,7 +638,6 @@ function refreshCategoryDropdown(items) {
         localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
     }
 
-    // เอาชื่อหมวดหมู่ที่เซฟไว้ มารวมกับข้อมูลจากฐานข้อมูล
     Object.keys(savedCustomCats).forEach(cat => uniqueCategories.add(cat));
 
     const addNewOption = Array.from(select.options).find(opt => opt.value === "ADD_NEW");
@@ -659,7 +655,6 @@ function refreshCategoryDropdown(items) {
             const opt = document.createElement('option');
             opt.value = cat;
 
-            // 🌟 ดึงอีโมจิจากที่เซฟไว้ ถ้าไม่เจอ (เช่น เป็นข้อมูลเก่าจาก DB) ให้ใช้ 🏷️
             const emoji = savedCustomCats[cat] || "🏷️";
             opt.text = emoji + " " + cat;
 
@@ -680,11 +675,10 @@ function updateCustomDropdownUI(select) {
     const list = wrapper.querySelector('.custom-select-list');
     const spanText = select.customDisplaySpan;
 
-    if (!list) return; // Exit if custom UI is not yet initialized
+    if (!list) return;
 
-    list.innerHTML = ''; // Clear old list
+    list.innerHTML = ''; 
 
-    // Rebuild the custom list with the newly added options
     Array.from(select.options).forEach((option, index) => {
         const item = document.createElement("div");
         item.className = "p-3 cursor-pointer hover:bg-accent hover:text-white dark:hover:bg-accentDark dark:hover:text-gray-900 transition-colors text-[0.95em] select-none";
@@ -714,22 +708,16 @@ function exportData() {
         return;
     }
 
-    // 1. Convert data to JSON string format with indentation (2 spaces)
     const dataStr = JSON.stringify(allItems, null, 2);
-
-    // 2. Create a Blob (file-like object) from the JSON string
     const blob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(blob);
 
-    // 3. Create a temporary invisible link to trigger the download
     const a = document.createElement('a');
     a.href = url;
 
-    // Set file name dynamically using the current date (e.g., 2026-05-15)
     const date = new Date().toISOString().split('T')[0];
     a.download = `MediaTracker_Backup_${date}.json`;
 
-    // 4. Click the link programmatically and clean up memory
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -744,7 +732,6 @@ async function importData(event) {
     const reader = new FileReader();
     reader.onload = async function(e) {
         try {
-            // 1. Parse the uploaded JSON file
             const importedItems = JSON.parse(e.target.result);
 
             if (!Array.isArray(importedItems)) {
@@ -753,26 +740,21 @@ async function importData(event) {
 
             if (confirm(`พบข้อมูล ${importedItems.length} รายการ ต้องการนำเข้าหรือไม่?\n(ข้อมูลที่มี ID ซ้ำจะถูกอัปเดต ส่วนข้อมูลใหม่จะถูกเพิ่มเข้าไป)`)) {
 
-                // Show loading state on button to prevent multiple clicks
                 const label = event.target.parentElement;
                 const originalText = label.innerHTML;
                 label.innerHTML = "⏳ Loading...";
-                label.style.pointerEvents = "none"; // Disable clicks
+                label.style.pointerEvents = "none";
 
-                // 2. Loop through imported items and process them (Upsert logic)
                 for (const item of importedItems) {
-                    // Check if item already exists in our current data array
                     const exists = allItems.find(x => x.id === item.id);
 
                     if (exists) {
-                        // If exists, Update it using PUT
                         await fetch(`${apiUrl}/${item.id}`, {
                             method: 'PUT',
                             headers: getAuthHeaders(),
                             body: JSON.stringify(item)
                         });
                     } else {
-                        // If not exists, Add new using POST
                         await fetch(apiUrl, {
                             method: 'POST',
                             headers: getAuthHeaders(),
@@ -781,12 +763,11 @@ async function importData(event) {
                     }
                 }
 
-                // Restore button UI
                 label.innerHTML = originalText;
                 label.style.pointerEvents = "auto";
 
                 showToast("✅ นำเข้าข้อมูลเสร็จสิ้น!", 'success');
-                loadItems(); // Refresh the display
+                loadItems(); 
             }
         } catch (error) {
             showToast("❌ ไฟล์ไม่ถูกต้อง หรือเกิดข้อผิดพลาดในการอ่านข้อมูล", 'error');
@@ -794,34 +775,28 @@ async function importData(event) {
         }
     };
 
-    // Read the selected file as text
     reader.readAsText(file);
-
-    // Reset file input so the exact same file can be selected again if needed
     event.target.value = '';
 }
 
-// Function to preview cover image before saving
 function previewCoverImage() {
     const url = document.getElementById('coverInput').value.trim();
     const preview = document.getElementById('coverPreview');
 
     if (url) {
         preview.src = url;
-        preview.classList.remove('hidden'); // แสดงรูป
+        preview.classList.remove('hidden'); 
     } else {
         preview.src = '';
-        preview.classList.add('hidden'); // ซ่อนรูปถ้าไม่มีลิงก์
+        preview.classList.add('hidden'); 
     }
 }
 
-// Error Handler: ถ้ารูปโหลดไม่ขึ้น (ลิงก์เสีย/ไม่ใช่รูปภาพ) ให้ซ่อนรูปทิ้งไป
 document.getElementById('coverPreview').addEventListener('error', function() {
     this.src = '';
     this.classList.add('hidden');
 });
 
-// Function to clear error styling when user starts typing
 function clearTitleError(element) {
     element.classList.remove('input-error');
     element.placeholder = "ชื่อเรื่อง (Title)";
@@ -830,11 +805,9 @@ function clearTitleError(element) {
 window.onscroll = function() {
     const btn = document.getElementById('scrollToTopBtn');
     if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-        // ถ้าเลื่อนลงมาเกิน 300px ให้โชว์ปุ่ม
         btn.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
         btn.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
     } else {
-        // ถ้าอยู่ใกล้ขอบบน ให้ซ่อนปุ่ม
         btn.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
         btn.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
     }
@@ -857,11 +830,15 @@ function updateCharts(items) {
     const labels = Object.keys(counts);
     const data = Object.values(counts);
 
+    // 🌟 1. ลบกราฟเก่าทิ้งเสมอ
     if (mediaChart) {
         mediaChart.destroy();
     }
 
+    // 🌟 2. ดึงสถานะโหมดและตั้งค่าสีฟอนต์ตอนเริ่มต้น
     const isDark = document.documentElement.classList.contains('dark-mode');
+    const textColor = isDark ? '#ffffff' : '#333333';
+
     mediaChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
@@ -883,7 +860,7 @@ function updateCharts(items) {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        color: isDark ? '#e0e0e0' : '#333',
+                        color: textColor, // 👈 โยนตัวแปรสีเข้าไป
                         font: { family: 'Prompt', size: 12 },
                         padding: 20
                     }
@@ -945,7 +922,7 @@ async function fetchMediaData() {
 // Skeleton Loading System
 function showSkeleton() {
     const listContainer = document.getElementById('mediaListContainer');
-    listContainer.innerHTML = ''; // ล้างหน้าจอเดิม
+    listContainer.innerHTML = ''; 
 
     for (let i = 0; i < 5; i++) {
         const div = document.createElement('div');
@@ -1110,7 +1087,7 @@ async function handleLogin() {
     if (response.ok) {
         const data = await response.json();
         localStorage.setItem('access_token', data.access_token);
-        localStorage.setItem('current_username', username); // 🌟 บันทึกชื่อ User เก็บไว้โชว์
+        localStorage.setItem('current_username', username); 
         location.reload();
     } else {
         showToast("Login Failed!", 'error');
@@ -1183,48 +1160,48 @@ async function handleRegister(e) {
     const user = document.getElementById('regUsernameInput').value.trim();
     const pass = document.getElementById('regPasswordInput').value;
     const confirmPass = document.getElementById('regConfirmPassword').value;
-	
+    
     if (!user || !pass || !confirmPass) {
         showToast("❌ กรุณากรอกข้อมูลให้ครบถ้วน!", 'error');
         return;
     }
-	
+    
     if (pass !== confirmPass) {
         showToast("❌ รหัสผ่านไม่ตรงกัน!", 'error');
         return;
     }
-	
+    
     const masterKey = getMasterKey();
     if (!masterKey) {
         showToast("❌ ยกเลิกการสมัคร: จำเป็นต้องใช้ Master Key", 'error');
         return;
     }
-	
+    
     const btn = document.getElementById('regBtn');
     const originalText = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังสมัคร...';
     btn.disabled = true;
-	
+    
     try {
         const response = await fetch(apiUrl.replace('/items', '/register'), {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'X-API-Key': masterKey // 🔑 แนบกุญแจไปกับ Headers เพื่อตรวจสอบ
+                'X-API-Key': masterKey
             },
             body: JSON.stringify({ username: user, password: pass })
         });
-		
+        
         if (response.status === 401) {
             localStorage.removeItem('mt_master_key');
             showToast("❌ Master Key ไม่ถูกต้อง!", 'error');
             return;
         }
-		
+        
         if (response.ok) {
             showToast("✅ สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ", 'success');
             toggleAuthMode();
-			
+            
             document.getElementById('regUsernameInput').value = '';
             document.getElementById('regPasswordInput').value = '';
             document.getElementById('regConfirmPassword').value = '';
