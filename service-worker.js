@@ -1,4 +1,4 @@
-importScripts('/version.js');
+importScripts('./version.js');
 
 const CACHE_NAME = `media-tracker-${BUILD_VERSION}`;
 const urlsToCache = [
