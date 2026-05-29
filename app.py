@@ -19,6 +19,7 @@ CORS(app)
 
 bcrypt = Bcrypt(app)
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "super-secret-key")
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = False
 jwt = JWTManager(app)
 
 # เชื่อมต่อ MongoDB Atlas เป็นฐานข้อมูลหลัก
