@@ -11,6 +11,7 @@
     <link rel="apple-touch-icon" href="Assets/Images/favicon.ico">
     <link rel="icon" type="image/x-icon" href="Assets/Images/favicon.ico">
 
+    <script src="version.js"></script>
     <link rel="stylesheet" href="output.css">
 
     <script>
@@ -21,22 +22,31 @@
     </script>
 </head>
 
-<body class="font-sans bg-bgLight text-gray-800 dark:bg-bgDark dark:text-gray-200 m-0 p-2 sm:p-5 transition-colors duration-300 flex justify-center min-h-screen">
+<body
+    class="font-sans bg-bgLight text-gray-800 dark:bg-bgDark dark:text-gray-200 m-0 p-2 sm:p-5 transition-colors duration-300 flex justify-center min-h-screen">
+
     <div id="loginModal" class="fixed inset-0 bg-black/80 z-[5000] flex items-center justify-center p-5 hidden">
-        <div class="bg-containerLight dark:bg-containerDark p-8 rounded-2xl w-full max-w-[400px] shadow-2xl border border-gray-200 dark:border-zinc-800 relative overflow-hidden">
+        <div
+            class="bg-containerLight dark:bg-containerDark p-8 rounded-2xl w-full max-w-[400px] shadow-2xl border border-gray-200 dark:border-zinc-800 relative overflow-hidden">
             <div id="loginSection" class="flex flex-col transition-all duration-300">
                 <h2 class="text-2xl font-bold mb-6 text-center">🔐 Login</h2>
                 <div class="flex flex-col gap-4">
-                    <input type="text" id="usernameInput" placeholder="Username" class="p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
+                    <input type="text" id="usernameInput" placeholder="Username"
+                        class="p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
                     <div class="relative">
-                        <input type="password" id="passwordInput" placeholder="Password" class="w-full p-3 pr-12 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
-                        <button type="button" onclick="togglePassword('passwordInput', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-[1.2em] opacity-50 hover:opacity-100 transition-opacity focus:outline-none">
+                        <input type="password" id="passwordInput" placeholder="Password"
+                            class="w-full p-3 pr-12 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
+                        <button type="button" onclick="togglePassword('passwordInput', this)"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-[1.2em] opacity-50 hover:opacity-100 transition-opacity focus:outline-none">
                             <i class="fa-solid fa-eye"></i> </button>
                     </div>
-                    <button onclick="handleLogin()" class="p-3 bg-accent text-white font-bold rounded-xl hover:opacity-90 transition-opacity">Login</button>
+                    <button onclick="handleLogin()"
+                        class="p-3 bg-accent text-white font-bold rounded-xl hover:opacity-90 transition-opacity">Login</button>
                     <div class="text-center mt-2">
                         <span class="text-sm opacity-60">Don't have an account? </span>
-                        <button onclick="toggleAuthView('register')" class="text-sm text-accent dark:text-accentDark font-bold hover:underline">Register here</button>
+                        <button onclick="toggleAuthView('register')"
+                            class="text-sm text-accent dark:text-accentDark font-bold hover:underline">Register
+                            here</button>
                     </div>
                 </div>
             </div>
@@ -44,90 +54,313 @@
             <div id="registerSection" class="flex flex-col hidden transition-all duration-300">
                 <h2 class="text-2xl font-bold mb-6 text-center">📝 Create Account</h2>
                 <div class="flex flex-col gap-4">
-                    <input type="text" id="regUsernameInput" placeholder="New Username" class="p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
+                    <input type="text" id="regUsernameInput" placeholder="New Username"
+                        class="p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
                     <div class="relative">
-                        <input type="password" id="regPasswordInput" placeholder="New Password" class="w-full p-3 pr-12 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
-                        <button type="button" onclick="togglePassword('regPasswordInput', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-[1.2em] opacity-50 hover:opacity-100 transition-opacity focus:outline-none">
+                        <input type="password" id="regPasswordInput" placeholder="New Password"
+                            class="w-full p-3 pr-12 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
+                        <button type="button" onclick="togglePassword('regPasswordInput', this)"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-[1.2em] opacity-50 hover:opacity-100 transition-opacity focus:outline-none">
                             <i class="fa-solid fa-eye"></i>
                         </button>
                     </div>
                     <div class="relative">
-                        <input type="password" id="regConfirmPassword" placeholder="Confirm Password" class="w-full p-3 pr-12 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
-                        <button type="button" onclick="togglePassword('regConfirmPassword', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-[1.2em] opacity-50 hover:opacity-100 transition-opacity focus:outline-none">
+                        <input type="password" id="regConfirmPassword" placeholder="Confirm Password"
+                            class="w-full p-3 pr-12 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
+                        <button type="button" onclick="togglePassword('regConfirmPassword', this)"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-[1.2em] opacity-50 hover:opacity-100 transition-opacity focus:outline-none">
                             <i class="fa-solid fa-eye"></i>
                         </button>
                     </div>
-                    <button onclick="handleRegister(event)" class="p-3 bg-[#28a745] text-white font-bold rounded-xl hover:opacity-90 transition-opacity">Register</button>
+                    <button onclick="handleRegister(event)"
+                        class="p-3 bg-[#28a745] text-white font-bold rounded-xl hover:opacity-90 transition-opacity">Register</button>
                     <div class="text-center mt-2">
                         <span class="text-sm opacity-60">Already have an account? </span>
-                        <button onclick="toggleAuthView('login')" class="text-sm text-accent dark:text-accentDark font-bold hover:underline">Back to Login</button>
+                        <button onclick="toggleAuthView('login')"
+                            class="text-sm text-accent dark:text-accentDark font-bold hover:underline">Back to
+                            Login</button>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
-    <div class="fixed bottom-5 right-5 bg-containerLight dark:bg-containerDark p-2.5 rounded-[50px] shadow-[0_4px_15px_rgba(0,0,0,0.2)] flex gap-2.5 z-[1000] border border-gray-200 dark:border-zinc-800">
-<!--        <button id="undoBtn" onclick="triggerUndo()" disabled class="px-[15px] py-2 bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-zinc-800 rounded-xl text-[0.9em] disabled:opacity-30 disabled:cursor-not-allowed">↩️ Undo (ย้อนกลับ)</button>-->
-<!--        <button id="redoBtn" onclick="triggerRedo()" disabled class="px-[15px] py-2 bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-zinc-800 rounded-xl text-[0.9em] disabled:opacity-30 disabled:cursor-not-allowed">Redo (ทำซ้ำ) ↪️</button>-->
+    <div id="itemModal" class="fixed inset-0 z-[5000] hidden
+    flex items-center justify-center
+    p-4 sm:p-6
+    bg-black/80
+    transition-opacity duration-200">
 
+        <div class="w-full max-w-[760px]
+        max-h-[90vh]
+        overflow-y-auto custom-scrollbar
+
+        rounded-3xl
+        border border-zinc-800
+
+        bg-zinc-900
+        shadow-2xl
+
+        p-5 sm:p-7
+        relative
+
+        animate-[modalPop_.18s_ease]">
+
+            <!-- HEADER -->
+            <div class="flex items-start justify-between mb-6 pb-4 border-b border-zinc-800">
+
+                <div>
+                    <h2 id="modalTitle"
+                        class="text-2xl sm:text-3xl font-bold tracking-tight text-white flex items-center gap-3">
+
+                        <span class="text-accentDark">✚</span>
+                        เพิ่มรายการใหม่
+                    </h2>
+
+                    <p class="text-sm text-zinc-400 mt-1">
+                        เพิ่มรายการหนัง เกม อนิเมะ หรือมังงะ
+                    </p>
+                </div>
+
+                <button onclick="closeItemModal()" class="w-10 h-10 rounded-full
+                flex items-center justify-center
+
+                bg-zinc-800
+                hover:bg-red-500
+
+                text-zinc-400
+                hover:text-white
+
+                transition-colors duration-200">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- CONTENT -->
+            <div id="modalFormContent">
+
+                <div class="space-y-3">
+
+                    <input type="hidden" id="editId">
+
+                    <!-- TITLE + LINK -->
+                    <div class="flex flex-col sm:flex-row gap-3">
+
+                        <div class="flex-[2] relative">
+
+                            <input type="text" id="titleInput" oninput="clearTitleError(this)"
+                                placeholder="🎬 ชื่อเรื่อง (Title)" class="modal-input pr-[120px]" />
+
+                            <button type="button" id="autofillBtn" onclick="fetchMediaData()" class="absolute right-2 top-1/2 -translate-y-1/2
+
+                            px-3 py-1.5
+                            rounded-xl
+
+                            bg-accent/15
+                            hover:bg-accent/25
+
+                            text-accentDark
+                            text-sm
+                            font-semibold
+
+                            border border-accent/20
+
+                            transition-colors duration-200">
+
+                                🔍 ดึงข้อมูล
+                            </button>
+                        </div>
+
+                        <input type="text" id="linkInput" placeholder="🔗 ลิงก์ (URL)" class="modal-input flex-1" />
+                    </div>
+
+                    <!-- COVER + TAG -->
+                    <div class="flex flex-col sm:flex-row gap-3">
+
+                        <div class="flex-1 relative">
+
+                            <input type="text" id="coverInput" oninput="previewCoverImage()"
+                                placeholder="🖼️ ลิงก์รูปหน้าปก" class="modal-input pr-[60px]" />
+
+                            <img id="coverPreview" src="" alt="Preview" class="absolute right-2 top-1/2 -translate-y-1/2
+                            w-10 h-10
+                            rounded-lg
+                            object-cover
+                            hidden
+                            border border-zinc-700">
+                        </div>
+
+                        <input type="text" id="tagsInput" placeholder="🏷️ หมวดหมู่ย่อย" class="modal-input flex-1" />
+                    </div>
+
+                    <!-- SELECT -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <select id="categoryInput" onchange="handleCategoryChange(this)" class="modal-select">
+                            <option value="Game">🎮 Game (เกม)</option>
+                            <option value="Movie">🎬 Movie (ภาพยนตร์)</option>
+                            <option value="Anime">📺 Anime (อนิเมะ)</option>
+                            <option value="Manga">📚 Manga (มังงะ)</option>
+                        </select>
+
+                        <select id="statusInput" class="modal-select">
+                            <option value="Planned">⏳ Planned (ดองไว้)</option>
+                            <option value="Completed">✅ Completed (จบแล้ว)</option>
+                            <option value="Dropped">❌ Dropped (เท/เลิกดู)</option>
+                            <option value="OnHold">⏸️ On Hold (พักไว้ก่อน)</option>
+                        </select>
+
+                        <select id="ratingInput" class="modal-select">
+                            <option value="0">Rating (คะแนน): -</option>
+                            <option value="5">⭐⭐⭐⭐⭐ (5 - ดีเยี่ยม)</option>
+                            <option value="4">⭐⭐⭐⭐ (4 - ดีมาก)</option>
+                            <option value="3">⭐⭐⭐ (3 - ปานกลาง)</option>
+                            <option value="2">⭐⭐ (2 - พอใช้)</option>
+                            <option value="1">⭐ (1 - แย่)</option>
+                        </select>
+                    </div>
+
+                    <!-- PROGRESS -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+                        <input type="number" id="currentProgressInput" placeholder="📌 ตอนที่ดูถึง" min="0"
+                            class="modal-input" />
+
+                        <input type="number" id="totalCountInput" placeholder="📚 ตอนทั้งหมด" min="0"
+                            class="modal-input" />
+                    </div>
+
+                    <!-- REVIEW -->
+                    <textarea id="reviewInput" placeholder="📝 รีวิว หรือบันทึก..."
+                        class="modal-input min-h-[110px] resize-y"></textarea>
+
+                    <!-- BUTTON -->
+                    <div class="flex gap-3 pt-2">
+
+                        <button id="submitBtn" onclick="handleFormSubmit()" class="flex-1 py-3.5 rounded-2xl
+
+                        bg-gradient-to-r
+                        from-accent
+                        to-accentDark
+
+                        text-white
+                        font-bold
+
+                        hover:opacity-90
+
+                        transition-opacity duration-200">
+
+                            ✨ Add to List
+                        </button>
+
+                        <button id="cancelBtn" onclick="cancelEdit()" class="hidden px-6 py-3.5 rounded-2xl
+
+                        bg-zinc-700
+                        hover:bg-zinc-600
+
+                        text-white
+                        font-semibold
+
+                        transition-colors duration-200">
+
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div
+        class="fixed bottom-5 right-5 bg-containerLight dark:bg-containerDark p-2.5 rounded-[50px] shadow-[0_4px_15px_rgba(0,0,0,0.2)] flex gap-2.5 z-[1000] border border-gray-200 dark:border-zinc-800">
         <div class="w-px h-6 bg-gray-300 dark:bg-zinc-700 mx-1 self-center"></div>
-
-        <button onclick="exportData()" class="px-[15px] py-2 bg-[#28a745] text-white border-none rounded-xl text-[0.9em] hover:bg-[#218838] transition-all shadow-sm" title="เซฟข้อมูลลงเครื่อง">💾 Export</button>
-        <label class="px-[15px] py-2 bg-[#17a2b8] text-white border-none rounded-xl text-[0.9em] hover:bg-[#138496] transition-all shadow-sm cursor-pointer flex items-center" title="โหลดข้อมูลจากเครื่อง">
+        <button onclick="exportData()"
+            class="px-[15px] py-2 bg-[#28a745] text-white border-none rounded-xl text-[0.9em] hover:bg-[#218838] transition-all shadow-sm"
+            title="เซฟข้อมูลลงเครื่อง">💾 Export</button>
+        <label
+            class="px-[15px] py-2 bg-[#17a2b8] text-white border-none rounded-xl text-[0.9em] hover:bg-[#138496] transition-all shadow-sm cursor-pointer flex items-center"
+            title="โหลดข้อมูลจากเครื่อง">
             📂 Import
             <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(event)">
         </label>
     </div>
 
-    <div class="w-full max-w-[700px] bg-containerLight dark:bg-containerDark p-4 sm:p-[30px] rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.1)] h-fit pb-[60px]">
+    <div
+        class="w-full max-w-[700px] bg-containerLight dark:bg-containerDark p-4 sm:p-[30px] rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.1)] h-fit pb-[60px]">
+
         <div class="flex justify-between items-center mb-5">
             <h2 class="text-2xl font-bold m-0 flex-1">Media Tracker (บันทึกการดู/เล่น)</h2>
             <div class="flex items-center gap-3">
-                <button id="installAppBtn" class="hidden bg-gradient-to-r from-accent to-accentDark text-white px-4 py-1.5 rounded-full font-bold shadow-md hover:scale-105 transition-transform text-sm flex items-center gap-2 border-none cursor-pointer">
+                <button id="installAppBtn"
+                    class="hidden bg-gradient-to-r from-accent to-accentDark text-white px-4 py-1.5 rounded-full font-bold shadow-md hover:scale-105 transition-transform text-sm flex items-center gap-2 border-none cursor-pointer">
                     <i class="fa-solid fa-download"></i> Install
                 </button>
-                <div id="userInfoPanel" class="hidden flex items-center gap-2 bg-black/5 dark:bg-white/5 px-3 py-1.5 rounded-full border border-gray-200 dark:border-zinc-700">
-                    <span class="text-sm font-semibold opacity-80 text-gray-800 dark:text-gray-200" id="currentUsernameDisplay">User</span>
+                <div id="userInfoPanel"
+                    class="hidden flex items-center gap-2 bg-black/5 dark:bg-white/5 px-3 py-1.5 rounded-full border border-gray-200 dark:border-zinc-700">
+                    <span class="text-sm font-semibold opacity-80 text-gray-800 dark:text-gray-200"
+                        id="currentUsernameDisplay">User</span>
                     <div class="w-px h-4 bg-gray-300 dark:bg-zinc-700"></div>
-                    <button onclick="handleLogout()" class="text-sm font-bold text-[#dc3545] hover:opacity-70 transition-opacity" title="ออกจากระบบ">
+                    <button onclick="handleLogout()"
+                        class="text-sm font-bold text-[#dc3545] hover:opacity-70 transition-opacity" title="ออกจากระบบ">
                         Logout
                     </button>
                 </div>
-                <button class="theme-toggle bg-bgLight dark:bg-bgDark border-2 border-accent dark:border-accentDark text-gray-800 dark:text-gray-200 w-10 h-10 rounded-full cursor-pointer text-[1.2rem] flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-[0_0_10px_rgba(0,0,0,0.1)] shrink-0" onclick="toggleTheme()">
+                <button
+                    class="theme-toggle bg-bgLight dark:bg-bgDark border-2 border-accent dark:border-accentDark text-gray-800 dark:text-gray-200 w-10 h-10 rounded-full cursor-pointer text-[1.2rem] flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-[0_0_10px_rgba(0,0,0,0.1)] shrink-0"
+                    onclick="toggleTheme()">
                     <span id="themeIcon">☀️</span>
                 </button>
             </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-[15px] mb-[25px]">
-            <div class="bg-bgLight dark:bg-bgDark p-[15px] rounded-xl border border-gray-200 dark:border-zinc-800 text-center">
+            <div
+                class="bg-bgLight dark:bg-bgDark p-[15px] rounded-xl border border-gray-200 dark:border-zinc-800 text-center">
                 <h3 class="m-0 text-[0.85em] opacity-70 font-semibold">📚 All Items (ทั้งหมด)</h3>
-                <span id="totalCount" class="block text-[1.6em] font-bold mt-[5px] text-gray-800 dark:text-gray-200">0</span>
+                <span id="totalCount"
+                    class="block text-[1.6em] font-bold mt-[5px] text-gray-800 dark:text-gray-200">0</span>
             </div>
-            <div class="bg-bgLight dark:bg-bgDark p-[15px] rounded-xl border border-gray-200 dark:border-zinc-800 text-center">
+            <div
+                class="bg-bgLight dark:bg-bgDark p-[15px] rounded-xl border border-gray-200 dark:border-zinc-800 text-center">
                 <h3 class="m-0 text-[0.85em] opacity-70 font-semibold">✅ Finished (จบแล้ว)</h3>
                 <span id="finishedCount" class="block text-[1.6em] font-bold mt-[5px] text-[#28a745]">0</span>
             </div>
-            <div class="bg-bgLight dark:bg-bgDark p-[15px] rounded-xl border border-gray-200 dark:border-zinc-800 text-center">
+            <div
+                class="bg-bgLight dark:bg-bgDark p-[15px] rounded-xl border border-gray-200 dark:border-zinc-800 text-center">
                 <h3 class="m-0 text-[0.85em] opacity-70 font-semibold">⏳ To Do (ดองไว้)</h3>
                 <span id="todoCount" class="block text-[1.6em] font-bold mt-[5px] text-[#f0ad4e]">0</span>
             </div>
         </div>
-        <div class="mb-[25px] p-[20px] bg-bgLight dark:bg-bgDark rounded-xl border border-gray-200 dark:border-zinc-800 shadow-sm">
-            <h3 class="text-center mb-4 text-[0.85em] opacity-70 font-semibold uppercase tracking-wider">📊 สัดส่วนหมวดหมู่ (Category Distribution)</h3>
+
+        <div
+            class="mb-[25px] p-[20px] bg-bgLight dark:bg-bgDark rounded-xl border border-gray-200 dark:border-zinc-800 shadow-sm">
+            <h3 class="text-center mb-4 text-[0.85em] opacity-70 font-semibold uppercase tracking-wider">📊
+                สัดส่วนหมวดหมู่ (Category Distribution)</h3>
             <div class="relative h-[230px] flex justify-center">
                 <canvas id="mediaChart"></canvas>
             </div>
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-[10px] mb-[15px]">
-            <div class="flex-[2]">
-                <input type="text" id="searchInput" placeholder="🔍 ค้นหาชื่อเรื่อง หรือตัวย่อ..." onkeyup="handleSearch()" class="w-full p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 font-sans focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all">
+        <div class="flex flex-col sm:flex-row gap-[10px] mb-[20px]">
+            <button onclick="openItemModal()"
+                class="w-full sm:w-auto px-6 py-3 bg-accent dark:bg-accentDark text-white font-bold rounded-xl shadow-md hover:scale-105 transition-all flex items-center justify-center gap-2 shrink-0 border-none">
+                ➕ Add New Item
+            </button>
+            <div class="flex-1 min-w-0 relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none opacity-60">
+                    🔍
+                </div>
+                <input type="text" id="searchInput" placeholder="ค้นหาชื่อเรื่อง หรือตัวย่อ..." onkeyup="handleSearch()"
+                    class="w-full h-full min-h-[48px] pl-[38px] pr-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all m-0">
             </div>
-            <div class="flex-[1]">
-                <select id="sortInput" onchange="handleSort()" class="w-full p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 font-sans focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all">
+            <div class="w-full sm:w-[200px] shrink-0">
+                <select id="sortInput" onchange="handleSort()"
+                    class="w-full h-full min-h-[48px] p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all m-0">
                     <option value="newest">🆕 ใหม่สุดไปเก่าสุด</option>
                     <option value="oldest">⏳ เก่าสุดไปใหม่สุด</option>
                     <option value="best">⭐ คะแนนสูงสุด</option>
@@ -139,87 +372,44 @@
         <div id="tagFiltersContainer" class="flex flex-wrap gap-2 mb-[20px] overflow-x-auto pb-2 custom-scrollbar">
         </div>
 
-        <div class="mb-[20px]">
-            <input type="hidden" id="editId">
-
-            <div class="flex flex-col sm:flex-row gap-[10px] mb-[10px]">
-                <div class="flex-[2] relative">
-                    <input type="text" id="titleInput" oninput="clearTitleError(this)" placeholder="ชื่อเรื่อง (Title)" class="flex-[2] w-full p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 font-sans focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all">
-                    <button type="button" id="autofillBtn" onclick="fetchMediaData()" class="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-accent/10 hover:bg-accent/20 dark:bg-accentDark/10 dark:hover:bg-accentDark/20 text-accent dark:text-accentDark text-[0.8em] font-bold rounded-lg transition-all border border-accent/20">
-                        🔍 ดึงข้อมูล
-                    </button>
-                </div>
-                <input type="text" id="linkInput" placeholder="🔗 ลิงก์ (URL)" class="flex-[1] w-full p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 font-sans focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all">
-            </div>
-
-            <div class="flex flex-col sm:flex-row gap-[10px] mb-[10px]">
-                <div class="flex-[1] relative">
-                    <input type="text" id="coverInput" oninput="previewCoverImage()" placeholder="🖼️ ลิงก์รูปหน้าปก (Cover Image URL)" class="w-full p-3 pr-[60px] border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 font-sans focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all">
-                    <img id="coverPreview" src="" alt="Preview" class="absolute right-2 top-1/2 transform -translate-y-1/2 w-[40px] h-[40px] object-cover rounded-lg hidden border border-gray-300 dark:border-zinc-700 shadow-sm pointer-events-none">
-                </div>
-                <input type="text" id="tagsInput" placeholder="🏷️ หมวดหมู่ย่อย (เช่น RPG, Action, Horror)" class="flex-[1] w-full p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 font-sans focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all">
-            </div>
-
-            <div class="flex flex-col sm:flex-row gap-[10px] mb-[10px]">
-                <select id="categoryInput" onchange="handleCategoryChange(this)" class="w-full p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 font-sans focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all">
-                    <option value="Game">🎮 Game (เกม)</option>
-                    <option value="Movie">🎬 Movie (ภาพยนตร์)</option>
-                    <option value="Anime">📺 Anime (อนิเมะ)</option>
-                    <option value="Manga">📚 Manga (มังงะ)</option>
-                    <option value="ADD_NEW" class="text-accent dark:text-accentDark font-semibold">➕ เพิ่มหมวดหมู่ใหม่...</option>
-                </select>
-                <select id="statusInput" class="w-full p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 font-sans focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all">
-                    <option value="Planned">⏳ Plan to Watch (ดองไว้)</option>
-                    <option value="Completed">✅ Completed (จบแล้ว)</option>
-                    <option value="Dropped">❌ Dropped (เท/เลิกดู)</option>
-                    <option value="OnHold">⏸️ On Hold (พักไว้ก่อน)</option>
-                </select>
-                <select id="ratingInput" class="w-full p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 font-sans focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all">
-                    <option value="0">Rating (คะแนน): -</option>
-                    <option value="5">⭐⭐⭐⭐⭐ (5 - ดีเยี่ยม)</option>
-                    <option value="4">⭐⭐⭐⭐ (4 - ดีมาก)</option>
-                    <option value="3">⭐⭐⭐ (3 - ปานกลาง)</option>
-                    <option value="2">⭐⭐ (2 - พอใช้)</option>
-                    <option value="1">⭐ (1 - แย่)</option>
-                </select>
-            </div>
-
-            <div class="flex flex-col sm:flex-row gap-[10px] mb-[10px]">
-                <input type="number" id="currentProgressInput" placeholder="ตอนที่ดูถึง" min="0" class="w-full p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 font-sans focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all">
-                <input type="number" id="totalCountInput" placeholder="ตอนทั้งหมด (ใส่ 0 ถ้ายังไม่จบ)" min="0" class="w-full p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 font-sans focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all">
-            </div>
-
-            <div class="flex flex-col sm:flex-row gap-[10px] mb-[10px]">
-                <textarea id="reviewInput" placeholder="📝 เขียนบันทึกความจำ หรือรีวิวสั้นๆ... (Optional)" class="w-full p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 font-sans focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all resize-y min-h-[80px]"></textarea>
-            </div>
-
-            <div class="flex gap-[10px]">
-                <button id="submitBtn" class="flex-1 p-[12px] bg-accent dark:bg-accentDark text-white text-[16px] font-semibold rounded-xl hover:opacity-90 transition-opacity font-sans" onclick="handleFormSubmit()">Add to List (เพิ่มรายการ)</button>
-                <button id="cancelBtn" class="hidden px-[20px] py-[12px] bg-[#6c757d] text-white rounded-xl hover:bg-gray-600 transition-colors font-sans" onclick="cancelEdit()">Cancel (ยกเลิก)</button>
-            </div>
-        </div>
-
         <div class="flex gap-[10px] mb-[20px] border-b border-gray-200 dark:border-zinc-700 pb-[10px] overflow-x-auto">
-            <button type="button" class="filter-btn active bg-transparent text-gray-800 dark:text-gray-200 px-[12px] py-[8px] opacity-60 font-semibold transition-all whitespace-nowrap" onclick="setFilter(event, 'All')">ทั้งหมด</button>
-            <button type="button" class="filter-btn bg-transparent text-gray-800 dark:text-gray-200 px-[12px] py-[8px] opacity-60 font-semibold transition-all whitespace-nowrap" onclick="setFilter(event, 'Progress')">ความคืบหน้า</button>
-            <button type="button" class="filter-btn bg-transparent text-gray-800 dark:text-gray-200 px-[12px] py-[8px] opacity-60 font-semibold transition-all whitespace-nowrap" onclick="setFilter(event, 'Planned')">ที่ต้องเก็บ</button>
-            <button type="button" class="filter-btn bg-transparent text-gray-800 dark:text-gray-200 px-[12px] py-[8px] opacity-60 font-semibold transition-all whitespace-nowrap" onclick="setFilter(event, 'Completed')">จบแล้ว</button>
+            <button type="button"
+                class="filter-btn active bg-transparent text-gray-800 dark:text-gray-200 px-[12px] py-[8px] opacity-60 font-semibold transition-all whitespace-nowrap"
+                onclick="setFilter(event, 'All')">ทั้งหมด</button>
+            <button type="button"
+                class="filter-btn bg-transparent text-gray-800 dark:text-gray-200 px-[12px] py-[8px] opacity-60 font-semibold transition-all whitespace-nowrap"
+                onclick="setFilter(event, 'Progress')">ความคืบหน้า</button>
+            <button type="button"
+                class="filter-btn bg-transparent text-gray-800 dark:text-gray-200 px-[12px] py-[8px] opacity-60 font-semibold transition-all whitespace-nowrap"
+                onclick="setFilter(event, 'Planned')">ที่ต้องเก็บ</button>
+            <button type="button"
+                class="filter-btn bg-transparent text-gray-800 dark:text-gray-200 px-[12px] py-[8px] opacity-60 font-semibold transition-all whitespace-nowrap"
+                onclick="setFilter(event, 'Completed')">จบแล้ว</button>
         </div>
 
-        <div id="multiSelectControls" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-[660px] bg-containerLight/95 dark:bg-containerDark/95 backdrop-blur-md p-4 rounded-2xl border border-accent/30 dark:border-accentDark/30 shadow-[0_10px_30px_rgba(0,0,0,0.25)] flex items-center justify-between gap-3 z-[2000] hidden transition-all duration-300">
+        <div id="multiSelectControls"
+            class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-[660px] bg-containerLight/95 dark:bg-containerDark/95 backdrop-blur-md p-4 rounded-2xl border border-accent/30 dark:border-accentDark/30 shadow-[0_10px_30px_rgba(0,0,0,0.25)] flex items-center justify-between gap-3 z-[2000] hidden transition-all duration-300">
             <div class="flex items-center gap-3">
-                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" class="w-5 h-5 cursor-pointer accent-accent dark:accent-accentDark rounded-md">
-                <label for="selectAllCheckbox" class="font-semibold text-gray-800 dark:text-gray-200 select-none cursor-pointer">
-                    <span id="selectCountText">เลือกแล้ว 0 รายการ</span> <span class="hidden sm:inline">(Select All)</span>
+                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)"
+                    class="w-5 h-5 cursor-pointer accent-accent dark:accent-accentDark rounded-md">
+                <label for="selectAllCheckbox"
+                    class="font-semibold text-gray-800 dark:text-gray-200 select-none cursor-pointer">
+                    <span id="selectCountText">เลือกแล้ว 0 รายการ</span> <span class="hidden sm:inline">(Select
+                        All)</span>
                 </label>
             </div>
-            <button id="deleteSelectedBtn" onclick="deleteSelectedItems()" class="px-5 py-2.5 bg-[#dc3545] text-white rounded-xl text-sm font-semibold hover:opacity-80 transition-all shadow-md flex items-center gap-2 border-none cursor-pointer" disabled>
+            <button id="deleteSelectedBtn" onclick="deleteSelectedItems()"
+                class="px-5 py-2.5 bg-[#dc3545] text-white rounded-xl text-sm font-semibold hover:opacity-80 transition-all shadow-md flex items-center gap-2 border-none cursor-pointer"
+                disabled>
                 🗑️ ลบรายการที่เลือก <span class="hidden sm:inline">(Delete Selected)</span>
             </button>
         </div>
+
         <div id="mediaListContainer"></div>
+
         <div id="loadMoreContainer" class="flex justify-center mt-[20px] mb-[10px] hidden">
-            <button onclick="loadMoreItems()" class="px-[25px] py-[10px] bg-gray-200 dark:bg-zinc-800 text-gray-800 dark:text-gray-200 font-semibold rounded-xl hover:bg-gray-300 dark:hover:bg-zinc-700 transition-colors shadow-sm flex items-center gap-2">
+            <button onclick="loadMoreItems()"
+                class="px-[25px] py-[10px] bg-gray-200 dark:bg-zinc-800 text-gray-800 dark:text-gray-200 font-semibold rounded-xl hover:bg-gray-300 dark:hover:bg-zinc-700 transition-colors shadow-sm flex items-center gap-2">
                 ⬇️ โหลดเพิ่มเติม (Load More)
             </button>
         </div>
@@ -227,13 +417,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
-	<script src="dropdown.js"></script>
+    <script src="dropdown.js"></script>
 
-    <button id="scrollToTopBtn" onclick="scrollToTop()" class="fixed bottom-[100px] right-8 bg-accent dark:bg-accentDark text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 transition-all duration-300 translate-y-10 pointer-events-none z-[999] hover:scale-110">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+    <button id="scrollToTopBtn" onclick="scrollToTop()"
+        class="fixed bottom-[100px] right-8 bg-accent dark:bg-accentDark text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 transition-all duration-300 translate-y-10 pointer-events-none z-[999] hover:scale-110">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m18 15-6-6-6 6" />
+        </svg>
     </button>
 
-    <div id="toastContainer" class="fixed top-5 right-5 z-[3000] flex flex-col gap-3 pointer-events-none"></div>
+    <div id="toastContainer" class="fixed top-5 right-5 z-[99999] flex flex-col gap-3 pointer-events-none"></div>
 </body>
 
 </html>

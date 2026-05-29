@@ -19,3 +19,4 @@ media_tracker.db
 mt.bat
 start_server.bat
 .env
+version.js

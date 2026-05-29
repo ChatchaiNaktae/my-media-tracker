@@ -17,6 +17,16 @@ let redoStack = [];
 
 let mediaChart = null;
 
+function openItemModal() {
+    const modal = document.getElementById('itemModal');
+    modal.classList.remove('hidden');
+}
+
+function closeItemModal() {
+    const modal = document.getElementById('itemModal');
+    modal.classList.add('hidden');
+}
+
 function getMasterKey() {
     let key = localStorage.getItem('mt_master_key');
     if (!key) {
@@ -474,6 +484,7 @@ async function handleFormSubmit() {
     
     cancelEdit(); 
     loadItems();
+    closeItemModal();
 }
 
 // Edit Item functionality
@@ -496,6 +507,8 @@ function startEditItem(id) {
     document.getElementById('submitBtn').textContent = "Update (อัปเดตข้อมูล)";
     document.getElementById('cancelBtn').classList.remove('hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    openItemModal();
 }
 
 function cancelEdit() {
@@ -951,34 +964,93 @@ function showSkeleton() {
 
 // Toast Notification System
 function showToast(message, type = 'success') {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.className = `
+            fixed top-4 right-4
+            flex flex-col gap-3
+            z-[99999]
+            pointer-events-none
+        `;
+        document.body.appendChild(container);
+    }
 
+    const toast = document.createElement('div');
     const config = {
-        success: { bg: 'border-l-[#28a745]', icon: '✅', title: 'Success', textColor: 'text-[#28a745]' },
-        error: { bg: 'border-l-[#dc3545]', icon: '❌', title: 'Error', textColor: 'text-[#dc3545]' },
-        warning: { bg: 'border-l-[#f0ad4e]', icon: '⚠️', title: 'Warning', textColor: 'text-[#f0ad4e]' },
-        info: { bg: 'border-l-[#17a2b8]', icon: 'ℹ️', title: 'Info', textColor: 'text-[#17a2b8]' }
+        success: {
+            bg: 'border-l-[#28a745]',
+            icon: '✅',
+            title: 'Success',
+            textColor: 'text-[#28a745]'
+        },
+        error: {
+            bg: 'border-l-[#dc3545]',
+            icon: '❌',
+            title: 'Error',
+            textColor: 'text-[#dc3545]'
+        },
+        warning: {
+            bg: 'border-l-[#f0ad4e]',
+            icon: '⚠️',
+            title: 'Warning',
+            textColor: 'text-[#f0ad4e]'
+        },
+        info: {
+            bg: 'border-l-[#17a2b8]',
+            icon: 'ℹ️',
+            title: 'Info',
+            textColor: 'text-[#17a2b8]'
+        }
     };
 
     const current = config[type] || config.success;
-
-    toast.className = `toast-in pointer-events-auto bg-containerLight dark:bg-containerDark border-l-4 ${current.bg} p-4 rounded-xl shadow-2xl flex items-center gap-3 min-w-[280px] max-w-[350px] border border-gray-200 dark:border-zinc-800`;
-
-    toast.innerHTML = `
-        <div class="text-xl">${current.icon}</div>
-        <div class="flex-1">
-            <div class="font-bold text-[0.9em] ${current.textColor}">${current.title}</div>
-            <div class="text-[0.85em] opacity-90">${message}</div>
-        </div>
-        <button onclick="this.parentElement.remove()" class="opacity-50 hover:opacity-100 text-lg">×</button>
+    toast.className = `
+        toast-in
+        pointer-events-auto
+        bg-containerLight dark:bg-containerDark
+        border-l-4 ${current.bg}
+        p-4 rounded-xl
+        shadow-2xl
+        flex items-center gap-3
+        min-w-[280px]
+        max-w-[350px]
+        border border-gray-200 dark:border-zinc-800
+        backdrop-blur-xl
     `;
 
-    container.appendChild(toast);
+    toast.innerHTML = `
+        <div class="text-xl shrink-0">${current.icon}</div>
+
+        <div class="flex-1 min-w-0">
+            <div class="font-bold text-[0.9em] ${current.textColor}">
+                ${current.title}
+            </div>
+
+            <div class="text-[0.85em] opacity-90 break-words">
+                ${message}
+            </div>
+        </div>
+
+        <button
+            onclick="this.parentElement.remove()"
+            class="opacity-50 hover:opacity-100 text-lg transition"
+        >
+            ×
+        </button>
+    `;
+
+    container.appendChild(toast)
 
     setTimeout(() => {
         toast.classList.add('toast-out');
-        setTimeout(() => toast.remove(), 500);
+        setTimeout(() => {
+            toast.remove();
+            if (container.children.length === 0) {
+                container.remove();
+            }
+        }, 500);
     }, 4000);
 }
 
