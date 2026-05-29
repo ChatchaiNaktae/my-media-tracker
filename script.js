@@ -547,10 +547,12 @@ function toggleTheme() {
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
     const icon = document.getElementById('themeIcon');
     icon.textContent = isDark ? '🌙' : '☀️';
-
+    
     const btn = document.querySelector('.theme-toggle');
     btn.classList.add('rotate-anim');
     setTimeout(() => { btn.classList.remove('rotate-anim'); }, 500);
+
+    updateCharts(allItems); 
 }
 
 (function initTheme() {

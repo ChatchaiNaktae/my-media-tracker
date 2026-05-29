@@ -4,6 +4,8 @@
 
 @import "tailwindcss";
 
+@variant dark (&:where(.dark-mode, .dark-mode *));
+
 /* =========================
    THEME VARIABLES
 ========================= */
