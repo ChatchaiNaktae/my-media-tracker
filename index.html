@@ -96,9 +96,9 @@
         overflow-y-auto custom-scrollbar
 
         rounded-3xl
-        border border-zinc-800
+        border border-gray-200 dark:border-zinc-800
 
-        bg-zinc-900
+        bg-containerLight dark:bg-zinc-900
         shadow-2xl
 
         p-5 sm:p-7
@@ -106,18 +106,17 @@
 
         animate-[modalPop_.18s_ease]">
 
-            <!-- HEADER -->
-            <div class="flex items-start justify-between mb-6 pb-4 border-b border-zinc-800">
+            <div class="flex items-start justify-between mb-6 pb-4 border-b border-gray-200 dark:border-zinc-800">
 
                 <div>
                     <h2 id="modalTitle"
-                        class="text-2xl sm:text-3xl font-bold tracking-tight text-white flex items-center gap-3">
+                        class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-800 dark:text-white flex items-center gap-3">
 
-                        <span class="text-accentDark">✚</span>
+                        <span class="text-accent dark:text-accentDark">✚</span>
                         เพิ่มรายการใหม่
                     </h2>
 
-                    <p class="text-sm text-zinc-400 mt-1">
+                    <p class="text-sm text-gray-500 dark:text-zinc-400 mt-1">
                         เพิ่มรายการหนัง เกม อนิเมะ หรือมังงะ
                     </p>
                 </div>
@@ -125,10 +124,10 @@
                 <button onclick="closeItemModal()" class="w-10 h-10 rounded-full
                 flex items-center justify-center
 
-                bg-zinc-800
-                hover:bg-red-500
+                bg-gray-200 dark:bg-zinc-800
+                hover:bg-red-500 dark:hover:bg-red-500
 
-                text-zinc-400
+                text-gray-600 dark:text-zinc-400
                 hover:text-white
 
                 transition-colors duration-200">
@@ -142,14 +141,12 @@
                 </button>
             </div>
 
-            <!-- CONTENT -->
             <div id="modalFormContent">
 
                 <div class="space-y-3">
 
                     <input type="hidden" id="editId">
 
-                    <!-- TITLE + LINK -->
                     <div class="flex flex-col sm:flex-row gap-3">
 
                         <div class="flex-[2] relative">
@@ -165,7 +162,7 @@
                             bg-accent/15
                             hover:bg-accent/25
 
-                            text-accentDark
+                            text-accent dark:text-accentDark
                             text-sm
                             font-semibold
 
@@ -180,7 +177,6 @@
                         <input type="text" id="linkInput" placeholder="🔗 ลิงก์ (URL)" class="modal-input flex-1" />
                     </div>
 
-                    <!-- COVER + TAG -->
                     <div class="flex flex-col sm:flex-row gap-3">
 
                         <div class="flex-1 relative">
@@ -193,13 +189,12 @@
                             rounded-lg
                             object-cover
                             hidden
-                            border border-zinc-700">
+                            border border-gray-300 dark:border-zinc-700">
                         </div>
 
                         <input type="text" id="tagsInput" placeholder="🏷️ หมวดหมู่ย่อย" class="modal-input flex-1" />
                     </div>
 
-                    <!-- SELECT -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <select id="categoryInput" onchange="handleCategoryChange(this)" class="modal-select">
                             <option value="Game">🎮 Game (เกม)</option>
@@ -225,7 +220,6 @@
                         </select>
                     </div>
 
-                    <!-- PROGRESS -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
                         <input type="number" id="currentProgressInput" placeholder="📌 ตอนที่ดูถึง" min="0"
@@ -235,11 +229,9 @@
                             class="modal-input" />
                     </div>
 
-                    <!-- REVIEW -->
                     <textarea id="reviewInput" placeholder="📝 รีวิว หรือบันทึก..."
                         class="modal-input min-h-[110px] resize-y"></textarea>
 
-                    <!-- BUTTON -->
                     <div class="flex gap-3 pt-2">
 
                         <button id="submitBtn" onclick="handleFormSubmit()" class="flex-1 py-3.5 rounded-2xl
@@ -260,10 +252,10 @@
 
                         <button id="cancelBtn" onclick="cancelEdit()" class="hidden px-6 py-3.5 rounded-2xl
 
-                        bg-zinc-700
-                        hover:bg-zinc-600
+                        bg-gray-300 dark:bg-zinc-700
+                        hover:bg-gray-400 dark:hover:bg-zinc-600
 
-                        text-white
+                        text-gray-800 dark:text-white
                         font-semibold
 
                         transition-colors duration-200">

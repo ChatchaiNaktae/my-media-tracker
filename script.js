@@ -876,7 +876,7 @@ async function fetchMediaData() {
     const btn = document.getElementById('autofillBtn');
 
     if (!title) {
-        showToast("⚠️ โปรดระบุชื่อเรื่องที่ต้องการค้นหาก่อนครับ!");
+        showToast("⚠️ โปรดระบุชื่อเรื่องที่ต้องการค้นหาก่อนครับ!", "error");
         return;
     }
 
