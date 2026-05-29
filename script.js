@@ -640,18 +640,16 @@ function refreshCategoryDropdown(items) {
 
     Object.keys(savedCustomCats).forEach(cat => uniqueCategories.add(cat));
 
-    const addNewOption = Array.from(select.options).find(opt => opt.value === "ADD_NEW");
-
-    uniqueCategories.forEach(cat => {
-        let exists = false;
-        for (let i = 0; i < select.options.length; i++) {
-            if (select.options[i].value === cat) {
-                exists = true;
-                break;
-            }
+    const defaultCats = ["Game", "Movie", "Anime", "Manga", "ADD_NEW", "MANAGE_CATEGORIES"];
+    Array.from(select.options).forEach(opt => {
+        if (!defaultCats.includes(opt.value)) {
+            opt.remove();
         }
+    });
 
-        if (!exists) {
+    const addNewOption = Array.from(select.options).find(opt => opt.value === "ADD_NEW");
+    uniqueCategories.forEach(cat => {
+        if (!defaultCats.includes(cat)) {
             const opt = document.createElement('option');
             opt.value = cat;
 
