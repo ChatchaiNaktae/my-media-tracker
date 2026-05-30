@@ -1,7 +1,8 @@
 import { getAuthHeaders } from './auth.js';
 import { showToast } from './ui.js';
+import { API_BASE_URL } from './config.js';
 
-const apiUrl = '/api/items';
+const apiUrl = `${API_BASE_URL}/items`;
 
 export function refreshCategoryDropdown(items) {
     const select = document.getElementById('categoryInput');

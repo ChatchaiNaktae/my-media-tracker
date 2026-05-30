@@ -1,4 +1,5 @@
-const apiUrl = '';
+import { API_BASE_URL } from './config.js';
+const apiUrl = API_BASE_URL;
 
 export function getMasterKey() {
     let key = localStorage.getItem('mt_master_key');

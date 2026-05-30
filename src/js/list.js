@@ -1,7 +1,8 @@
 import { getAuthHeaders } from './auth.js';
 import { showSkeleton } from './ui.js';
+import { API_BASE_URL } from './config.js';
 
-const apiUrl = '/api/items';
+const apiUrl = `${API_BASE_URL}/items`;
 
 let allItems = [];
 let currentFilter = 'All';

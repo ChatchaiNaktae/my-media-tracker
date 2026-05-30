@@ -19,6 +19,7 @@ const urlsToCache = [
     './src/js/form.js',
     './src/js/list.js',
     './src/js/dropdown.js',
+    './src/js/config.js',
     './manifest.json',
     './Assets/Images/favicon.ico',
     './Assets/Images/icon-192.png',
