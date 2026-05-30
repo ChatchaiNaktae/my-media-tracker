@@ -1,21 +1,33 @@
 importScripts('./version.js');
 
 const CACHE_NAME = `media-tracker-${BUILD_VERSION}`;
+
 const urlsToCache = [
     './',
     './index.html',
-    './style.css',
-    './script.js',
-    './dropdown.js',
+    './output.css',
+    './src/js/main.js',
+    './src/js/script.js',
+    './src/js/theme.js',
+    './src/js/ui.js',
+    './src/js/auth.js',
+    './src/js/dashboard.js',
+    './src/js/history.js',
+    './src/js/category.js',
+    './src/js/data.js',
+    './src/js/multiselect.js',
+    './src/js/form.js',
+    './src/js/list.js',
+    './src/js/dropdown.js',
     './manifest.json',
     './Assets/Images/favicon.ico',
     './Assets/Images/icon-192.png',
-    './Assets/Images/icon-512.png',
-    './Assets/Images/screenshot-mobile.png',
-    './Assets/Images/screenshot-desktop.png'
+    './Assets/Images/icon-512.png'
 ];
 
 self.addEventListener('install', event => {
+    self.skipWaiting();
+
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
@@ -33,23 +45,24 @@ self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request)
             .then(response => {
-                // ถ้ามีไฟล์ใน Cache ให้ใช้ Cache, ถ้าไม่มีให้ไปโหลดผ่านเน็ต
                 return response || fetch(event.request);
             })
     );
 });
 
 self.addEventListener('activate', event => {
-    const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames.map(cacheName => {
-                    if (cacheWhitelist.indexOf(cacheName) === -1) {
-                        return caches.delete(cacheName);
+                    if (cacheName !== CACHE_NAME) {
+                        console.log('Deleting old cache:', cacheName);
+                        return caches.delete(cacheName); // ล้างของเก่าทิ้ง
                     }
                 })
             );
+        }).then(() => {
+            return self.clients.claim();
         })
     );
 });

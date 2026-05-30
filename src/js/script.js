@@ -3,7 +3,17 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./service-worker.js')
             .then(registration => {
-                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                console.log('ServiceWorker registration successful');
+
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            console.log('New version detected! Auto-reloading...');
+                            window.location.reload();
+                        }
+                    });
+                });
             })
             .catch(error => {
                 console.log('ServiceWorker registration failed: ', error);
