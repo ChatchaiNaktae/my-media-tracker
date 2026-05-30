@@ -1,6 +1,6 @@
 import { getAuthHeaders } from './auth.js';
 
-const apiUrl = 'https://my-media-tracker-api.onrender.com/items';
+const apiUrl = '/items';
 
 let undoStack = [];
 let redoStack = [];

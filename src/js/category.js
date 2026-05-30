@@ -1,7 +1,7 @@
 import { getAuthHeaders } from './auth.js';
 import { showToast } from './ui.js';
 
-const apiUrl = 'https://my-media-tracker-api.onrender.com/items';
+const apiUrl = '/items';
 
 export function refreshCategoryDropdown(items) {
     const select = document.getElementById('categoryInput');

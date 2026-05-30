@@ -1,4 +1,4 @@
-const apiUrl = 'https://my-media-tracker-api.onrender.com';
+const apiUrl = '';
 
 export function getMasterKey() {
     let key = localStorage.getItem('mt_master_key');

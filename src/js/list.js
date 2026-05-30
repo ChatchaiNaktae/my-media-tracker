@@ -1,7 +1,7 @@
 import { getAuthHeaders } from './auth.js';
 import { showSkeleton } from './ui.js';
 
-const apiUrl = 'https://my-media-tracker-api.onrender.com/items';
+const apiUrl = '/items';
 
 let allItems = [];
 let currentFilter = 'All';

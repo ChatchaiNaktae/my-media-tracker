@@ -1,7 +1,7 @@
 import { getAuthHeaders } from './auth.js';
 import { showToast } from './ui.js';
 
-const apiUrl = 'https://my-media-tracker-api.onrender.com/items';
+const apiUrl = '/items';
 
 // Function to export current data to a JSON file
 export function exportData() {

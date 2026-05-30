@@ -2,7 +2,7 @@ import { getAuthHeaders } from './auth.js';
 import { showToast, closeItemModal, openItemModal } from './ui.js';
 import { saveAction } from './history.js';
 
-const apiUrl = 'https://my-media-tracker-api.onrender.com/items';
+const apiUrl = '/items';
 
 let isEditing = false;
 
