@@ -4,8 +4,8 @@
   "description": "Web Application แบบ Full-Stack สำหรับบันทึกและจัดการคอลเลกชันสื่อส่วนตัว (Games, Anime, Manga, Movies) พัฒนาด้วยสถาปัตยกรรมที่ทันสมัย รองรับการติดตั้งเป็นแอปพลิเคชันมือถือ (Progressive Web App) และมีระบบรักษาความปลอดภัยระดับมาตรฐานอุตสาหกรรม",
   "main": "dropdown.js",
   "scripts": {
-    "build": "node version-generator.js && npx tailwindcss -i input.css -o output.css --minify",
-    "watch": "npx tailwindcss -i input.css -o output.css --watch"
+    "build": "node version-generator.js && npx tailwindcss -i src/css/input.css -o output.css --minify",
+    "watch": "npx tailwindcss -i src/css/input.css -o output.css --watch"
   },
   "repository": {
     "type": "git",

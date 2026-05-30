@@ -11,17 +11,20 @@
 ========================= */
 
 @theme {
-    --color-bgLight: #f8f9fa;
-    --color-bgDark: #121212;
+    /* 60% - Main Background */
+    --color-bgLight: #F4F6F8;
+    --color-bgDark: #0F172A;
+    
+    /* 30% - Secondary Elements */
+    --color-containerLight: #FFFFFF;
+    --color-containerDark: #1E293B;
 
-    --color-containerLight: #ffffff;
-    --color-containerDark: #1e1e1e;
+    --color-itemLight: #E2E8F0;
+    --color-itemDark: #334155;
 
-    --color-itemLight: #f1f3f5;
-    --color-itemDark: #2c2c2c;
-
-    --color-accent: #4a90e2;
-    --color-accentDark: #bb86fc;
+    /* 10% - Accent Highlights */
+    --color-accent: #2563EB;
+    --color-accentDark: #10B981;
 }
 
 /* =========================

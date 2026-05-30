@@ -3,18 +3,22 @@ module.exports = {
   darkMode: ['class', '.dark-mode'],
   content: [
     "./*.{html,js}",
+    "./src/js/**/*.js",
   ],
   theme: {
     extend: {
       colors: {
-        bgLight: '#f8f9fa',
-        bgDark: '#121212',
-        containerLight: '#ffffff',
-        containerDark: '#1e1e1e',
-        itemLight: '#f1f3f5',
-        itemDark: '#2c2c2c',
-        accent: '#4a90e2',
-        accentDark: '#bb86fc',
+        // 60% - Main Background
+        bgLight: '#F4F6F8',
+        bgDark: '#0F172A',
+        // 30% - Secondary Elements
+        containerLight: '#FFFFFF',
+        containerDark: '#1E293B',
+        itemLight: '#E2E8F0',
+        itemDark: '#334155',
+        // 10% - Accent Highlights
+        accent: '#2563EB',
+        accentDark: '#10B981',
       },
       fontFamily: {
         sans: ['Prompt', 'sans-serif'],
