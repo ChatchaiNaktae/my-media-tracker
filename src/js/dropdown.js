@@ -70,16 +70,17 @@ window.addEventListener("load", () => {
             }
         });
     };
-
-    if (typeof startEditItem === "function") {
-        const originalStart = startEditItem;
+    
+    if (typeof window.startEditItem === "function") {
+        const originalStart = window.startEditItem;
         window.startEditItem = function(id) {
             originalStart(id);
             updateUI();
         };
     }
-    if (typeof cancelEdit === "function") {
-        const originalCancel = cancelEdit;
+    
+    if (typeof window.cancelEdit === "function") {
+        const originalCancel = window.cancelEdit;
         window.cancelEdit = function() {
             originalCancel();
             updateUI();

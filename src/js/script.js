@@ -49,7 +49,7 @@ document.getElementById('coverPreview').addEventListener('error', function() {
     this.classList.add('hidden');
 });
 
-function clearTitleError(element) {
+window.clearTitleError = function(element) {
     element.classList.remove('input-error');
     element.placeholder = "ชื่อเรื่อง (Title)";
 }
