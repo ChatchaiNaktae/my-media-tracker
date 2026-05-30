@@ -24,7 +24,7 @@ bcrypt.init_app(app)
 init_db()
 
 # Register API Routes
-app.register_blueprint(api)
+app.register_blueprint(api, url_prefix='/api')
 
 # Root Route for Frontend
 @app.route('/')

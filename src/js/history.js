@@ -1,6 +1,6 @@
 import { getAuthHeaders } from './auth.js';
 
-const apiUrl = '/items';
+const apiUrl = '/api/items';
 
 let undoStack = [];
 let redoStack = [];

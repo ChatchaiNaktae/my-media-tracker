@@ -38,8 +38,8 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('fetch', event => {
-    if (event.request.url.includes('/items') || event.request.url.includes('/login') || event.request.url.includes('/register')) {
-        return;
+    if (event.request.url.includes('/api/')) {
+        return; 
     }
 
     event.respondWith(

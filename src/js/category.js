@@ -1,7 +1,7 @@
 import { getAuthHeaders } from './auth.js';
 import { showToast } from './ui.js';
 
-const apiUrl = '/items';
+const apiUrl = '/api/items';
 
 export function refreshCategoryDropdown(items) {
     const select = document.getElementById('categoryInput');

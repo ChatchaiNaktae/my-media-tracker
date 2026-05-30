@@ -2,7 +2,7 @@ import { getAuthHeaders } from './auth.js';
 import { showToast } from './ui.js';
 import { saveAction } from './history.js';
 
-const apiUrl = '/items';
+const apiUrl = '/api/items';
 
 let selectedItems = new Set();
 
