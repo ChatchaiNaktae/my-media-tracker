@@ -10,7 +10,7 @@ from routes import api, bcrypt
 
 # Setup Flask
 app = Flask(__name__, static_folder='../', static_url_path='')
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": ["https://chatchainaktae.github.io", "http://127.0.0.1:8080", "http://localhost:8080"]}})
 
 # Load Configuration
 app.config["JWT_SECRET_KEY"] = Config.JWT_SECRET_KEY
