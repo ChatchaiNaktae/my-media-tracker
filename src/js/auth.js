@@ -1,17 +1,6 @@
 import { API_BASE_URL } from './config.js';
 const apiUrl = API_BASE_URL;
 
-export function getMasterKey() {
-    let key = localStorage.getItem('mt_master_key');
-    if (!key) {
-        key = prompt("🔒 ระบบรักษาความปลอดภัย: กรุณาใส่รหัส Master Key ผู้ดูแลระบบเพื่อยืนยันสิทธิ์ในการสมัครสมาชิก");
-        if (key) {
-            localStorage.setItem('mt_master_key', key);
-        }
-    }
-    return key;
-}
-
 export function getAuthHeaders() {
     return {
         'Content-Type': 'application/json',
@@ -78,47 +67,34 @@ export async function handleRegister(e) {
     const confirmPass = document.getElementById('regConfirmPassword').value;
     
     if (!user || !pass || !confirmPass) {
-        window.showToast("❌ กรุณากรอกข้อมูลให้ครบถ้วน!", 'error');
+        window.showToast("กรุณากรอกข้อมูลให้ครบถ้วน!", 'error');
         return;
     }
     
     if (pass !== confirmPass) {
-        window.showToast("❌ รหัสผ่านไม่ตรงกัน!", 'error');
-        return;
-    }
-    
-    const masterKey = getMasterKey();
-    if (!masterKey) {
-        window.showToast("❌ ยกเลิกการสมัคร: จำเป็นต้องใช้ Master Key", 'error');
+        window.showToast("รหัสผ่านไม่ตรงกัน!", 'error');
         return;
     }
     
     try {
         const response = await fetch(`${apiUrl}/register`, {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'X-API-Key': masterKey
+            headers: {
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({ username: user, password: pass })
         });
-        
-        if (response.status === 401) {
-            localStorage.removeItem('mt_master_key');
-            window.showToast("❌ Master Key ไม่ถูกต้อง!", 'error');
-            return;
-        }
-        
+
         if (response.ok) {
-            window.showToast("✅ สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ", 'success');
+            window.showToast("สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ", 'success');
             toggleAuthView('login'); // กลับไปหน้า Login
         } else {
             const res = await response.json();
-            window.showToast(res.message || "❌ Registration Failed!", 'error');
+            window.showToast(res.message || "Registration Failed!", 'error');
         }
     } catch (error) {
         console.error(error);
-        window.showToast("❌ Server error during registration.", 'error');
+        window.showToast("Server error during registration.", 'error');
     }
 }
 

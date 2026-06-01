@@ -56,13 +56,13 @@ export function toggleSelectAll(checkbox) {
 
 export async function deleteSelectedItems() {
     if (selectedItems.size === 0) return;
-    if (confirm(`คุณต้องการลบ ${selectedItems.size} รายการที่เลือกใช่หรือไม่?\n(ลบแล้วกู้คืนไม่ได้นะ)`)) {
+    if (confirm(`คุณต้องการลบ ${selectedItems.size} รายการที่เลือกใช่หรือไม่?\n(สามารถกู้คืนได้ด้วย Undo)`)) {
         const currentItems = typeof window.getAllItems === 'function' ? window.getAllItems() : [];
         const deletedItems = currentItems.filter(x => selectedItems.has(x.id)); 
 
         const btn = document.getElementById('deleteSelectedBtn');
         const originalText = btn.innerHTML;
-        btn.innerHTML = "⏳ ลบข้อมูล...";
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> ลบข้อมูล...';
         btn.disabled = true;
 
         try {
@@ -75,12 +75,12 @@ export async function deleteSelectedItems() {
             saveAction({ type: 'batch_delete', items: deletedItems }); 
             selectedItems.clear();
             updateMultiSelectUI();
-            showToast("✅ ลบรายการที่เลือกสำเร็จ!", 'success');
+            showToast("ลบรายการที่เลือกสำเร็จ!", 'success');
             
             if (typeof window.loadItems === 'function') window.loadItems();
         } catch (error) {
             console.error("Batch Delete Error:", error);
-            showToast("❌ เกิดข้อผิดพลาดในการลบข้อมูล", 'error');
+            showToast("เกิดข้อผิดพลาดในการลบข้อมูล", 'error');
         } finally {
             btn.innerHTML = originalText;
             btn.disabled = false;

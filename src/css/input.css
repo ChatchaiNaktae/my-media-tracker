@@ -28,6 +28,21 @@
 }
 
 /* =========================
+   REDUCED MOTION
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* =========================
    UTILITIES
 ========================= */
 
@@ -105,9 +120,10 @@
     }
 
     .btn-plus {
-        @apply text-white rounded-full w-[22px] h-[22px] ml-[10px] font-bold flex items-center justify-center;
+        @apply text-white rounded-full w-[26px] h-[26px] ml-[10px] font-bold flex items-center justify-center cursor-pointer transition-transform duration-200 hover:scale-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark;
 
         background: var(--color-accent);
+        font-size: 0.85em;
     }
 
     .item-review {
@@ -121,7 +137,7 @@
     }
 
     .btn-icon {
-        @apply px-3 py-2 text-white rounded-xl transition-all duration-200 hover:scale-105;
+        @apply px-3 py-2 text-white rounded-xl transition-all duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-1;
     }
 
     .btn-edit {
@@ -166,6 +182,18 @@
         60% {
             transform: translate3d(4px, 0, 0);
         }
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        vertical-align: middle;
     }
 
     /* Toast */
@@ -229,6 +257,11 @@
         focus:ring-accent/20;
     }
 
+    .modal-input:focus-visible {
+        @apply border-accent ring-2 ring-accent/20 dark:border-accentDark dark:ring-accentDark/20;
+        outline: none;
+    }
+
     .modal-select {
         @apply w-full
         p-3.5
@@ -246,6 +279,11 @@
         focus:border-accent
         focus:ring-2
         focus:ring-accent/20;
+    }
+
+    .modal-select:focus-visible {
+        @apply border-accent ring-2 ring-accent/20 dark:border-accentDark dark:ring-accentDark/20;
+        outline: none;
     }
 }
 

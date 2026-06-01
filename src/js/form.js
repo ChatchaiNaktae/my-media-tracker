@@ -30,7 +30,7 @@ export async function handleFormSubmit() {
 
     if(!title) {
         titleInput.classList.add('input-error', 'animate-shake'); 
-        titleInput.placeholder = "⚠️ กรุณาใส่ชื่อเรื่องก่อนบันทึก!";
+        titleInput.placeholder = "กรุณาใส่ชื่อเรื่องก่อนบันทึก!";
         setTimeout(() => titleInput.classList.remove('animate-shake'), 400);
         return;
     }
@@ -116,7 +116,7 @@ export function cancelEdit() {
 }
 
 export async function deleteItem(id) {
-    if(confirm("ลบรายการนี้ใช่ไหม? ข้อมูลจะไม่สามารถกู้คืนได้")) { 
+    if(confirm("ลบรายการนี้ใช่ไหม? (สามารถกู้คืนได้ด้วย Undo)")) { 
         const currentItems = typeof window.getAllItems === 'function' ? window.getAllItems() : [];
         const deletedItem = currentItems.find(x => x.id === id);
         

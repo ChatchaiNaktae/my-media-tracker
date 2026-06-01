@@ -1,4 +1,3 @@
-import { toggleTheme } from './theme.js';
 import { openItemModal, closeItemModal, showToast, scrollToTop, showSkeleton } from './ui.js';
 import { handleLogin, handleLogout, handleRegister, toggleAuthView, togglePassword, checkAuth, getAuthHeaders } from './auth.js';
 import { updateDashboard, updateCharts, getMediaChart } from './dashboard.js';
@@ -12,10 +11,9 @@ import { getAllItems, loadItems, renderItems, loadMoreItems, setFilter, handleSe
 window.getAllItems = getAllItems;
 
 // Theme
-window.toggleTheme = function() {
-    const currentItems = typeof window.getAllItems === 'function' ? window.getAllItems() : [];
-    toggleTheme(getMediaChart(), currentItems, updateCharts); 
-};
+import { toggleTheme, initTheme } from './theme.js';
+initTheme(getMediaChart, updateCharts);
+document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
 
 // UI
 window.openItemModal = openItemModal;

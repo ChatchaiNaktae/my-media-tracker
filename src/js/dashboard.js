@@ -51,7 +51,7 @@ export function updateCharts(items) {
             datasets: [{
                 data: data,
                 backgroundColor: [
-                    '#4a90e2', '#bb86fc', '#28a745', '#f0ad4e', '#dc3545', '#17a2b8'
+                    '#2563EB', '#10B981', '#28A745', '#F59E0B', '#DC2626', '#17A2B8'
                 ],
                 borderWidth: 0,
                 hoverOffset: 15

@@ -1,13 +1,14 @@
 import { getAuthHeaders } from './auth.js';
 import { showToast } from './ui.js';
 import { API_BASE_URL } from './config.js';
+import { escapeHtml } from './utils.js';
 
 const apiUrl = `${API_BASE_URL}/items`;
 
 export function refreshCategoryDropdown(items) {
     const select = document.getElementById('categoryInput');
     const uniqueCategories = new Set();
-    
+
     items.forEach(item => {
         if (item.category) uniqueCategories.add(item.category);
     });
@@ -56,7 +57,7 @@ export function updateCustomDropdownUI(select) {
 
     if (!list) return;
 
-    list.innerHTML = ''; 
+    list.innerHTML = '';
 
     Array.from(select.options).forEach((option, index) => {
         const item = document.createElement("div");
@@ -94,7 +95,7 @@ function addNewCategory() {
     if (newCat && newCat.trim() !== "") {
         const catName = newCat.trim();
         let exists = false;
-        
+
         for (let i = 0; i < select.options.length; i++) {
             if (select.options[i].value.toLowerCase() === catName.toLowerCase()) {
                 exists = true;
@@ -109,14 +110,14 @@ function addNewCategory() {
 
             const opt = document.createElement('option');
             opt.value = catName;
-            opt.text = emoji + " " + catName; 
+            opt.text = emoji + " " + catName;
 
             const addNewOptionIndex = select.options.length - 1;
             select.insertBefore(opt, select.options[addNewOptionIndex]);
             select.value = catName;
 
             let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
-            savedCustomCats[catName] = emoji; 
+            savedCustomCats[catName] = emoji;
             localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
         }
     } else {
@@ -152,15 +153,48 @@ function renderManageCategories() {
         return;
     }
 
-    list.innerHTML = catNames.map(cat => `
-        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700">
-            <span class="font-semibold text-gray-800 dark:text-gray-200">${savedCustomCats[cat]} ${cat}</span>
-            <div class="flex gap-1.5">
-                <button onclick="editCustomCategory('${cat}')" class="w-8 h-8 flex items-center justify-center bg-yellow-400 text-gray-900 rounded-lg hover:scale-105 transition-transform shadow-sm" title="แก้ไข">✏️</button>
-                <button onclick="deleteCustomCategory('${cat}')" class="w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-lg hover:scale-105 transition-transform shadow-sm" title="ลบ">🗑️</button>
-            </div>
-        </div>
-    `).join('');
+    list.innerHTML = '';
+
+    catNames.forEach(cat => {
+        const emoji = escapeHtml(savedCustomCats[cat]);
+        const safeCatHtml = escapeHtml(cat);
+
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700';
+
+        // Display span — use textContent for auto-escaping
+        const span = document.createElement('span');
+        span.className = 'font-semibold text-gray-800 dark:text-gray-200';
+        span.textContent = savedCustomCats[cat] + ' ' + cat;
+
+        // Button container
+        const btnDiv = document.createElement('div');
+        btnDiv.className = 'flex gap-1.5';
+
+        // Edit button — uses addEventListener instead of inline onclick
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.className = 'w-8 h-8 flex items-center justify-center bg-yellow-400 text-gray-900 rounded-lg hover:scale-105 transition-transform shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-1';
+        editBtn.title = 'แก้ไข';
+        editBtn.setAttribute('aria-label', 'Edit ' + safeCatHtml);
+        editBtn.innerHTML = '<i class="fa-solid fa-pen text-xs" aria-hidden="true"></i>';
+        editBtn.addEventListener('click', () => editCustomCategory(cat));
+
+        // Delete button — uses addEventListener instead of inline onclick
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-lg hover:scale-105 transition-transform shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1';
+        delBtn.title = 'ลบ';
+        delBtn.setAttribute('aria-label', 'Delete ' + safeCatHtml);
+        delBtn.innerHTML = '<i class="fa-solid fa-trash-can text-xs" aria-hidden="true"></i>';
+        delBtn.addEventListener('click', () => deleteCustomCategory(cat));
+
+        btnDiv.appendChild(editBtn);
+        btnDiv.appendChild(delBtn);
+        row.appendChild(span);
+        row.appendChild(btnDiv);
+        list.appendChild(row);
+    });
 }
 
 export async function editCustomCategory(oldName) {
@@ -168,12 +202,12 @@ export async function editCustomCategory(oldName) {
     let oldEmoji = savedCustomCats[oldName];
 
     const newName = prompt(`แก้ไขชื่อหมวดหมู่ "${oldName}":`, oldName);
-    if (newName === null) return; 
-    
+    if (newName === null) return;
+
     const finalName = (newName.trim() !== "") ? newName.trim() : oldName;
     const newEmoji = prompt(`แก้ไขอีโมจิสำหรับ "${finalName}":`, oldEmoji);
     if (newEmoji === null) return;
-    
+
     const finalEmoji = (newEmoji.trim() !== "") ? newEmoji.trim() : "🏷️";
     if (finalName === oldName && finalEmoji === oldEmoji) return;
 
@@ -183,10 +217,10 @@ export async function editCustomCategory(oldName) {
 
     const currentItems = typeof window.getAllItems === 'function' ? window.getAllItems() : [];
     const itemsToUpdate = currentItems.filter(item => item.category === oldName);
-    
+
     if (itemsToUpdate.length > 0) {
         if (confirm(`พบข้อมูล ${itemsToUpdate.length} รายการที่ใช้หมวดหมู่ "${oldName}"\nต้องการอัปเดตชื่อหมวดหมู่ในข้อมูลเหล่านั้นให้เป็น "${finalName}" ด้วยหรือไม่?`)) {
-            showToast("⏳ กำลังอัปเดตข้อมูล...", 'info');
+            showToast("กำลังอัปเดตข้อมูล...", 'info');
             for (let item of itemsToUpdate) {
                 item.category = finalName;
                 await fetch(`${apiUrl}/${item.id}`, {
@@ -195,8 +229,8 @@ export async function editCustomCategory(oldName) {
                     body: JSON.stringify(item)
                 });
             }
-            showToast("✅ อัปเดตข้อมูลสำเร็จ!", 'success');
-            if (typeof window.loadItems === 'function') window.loadItems(); 
+            showToast("อัปเดตข้อมูลสำเร็จ!", 'success');
+            if (typeof window.loadItems === 'function') window.loadItems();
         }
     }
     renderManageCategories();
@@ -207,8 +241,8 @@ export function deleteCustomCategory(catName) {
         let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
         delete savedCustomCats[catName];
         localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
-        
-        showToast(`✅ ลบหมวดหมู่ "${catName}" เรียบร้อย`, 'success');
+
+        showToast(`ลบหมวดหมู่ "${escapeHtml(catName)}" เรียบร้อย`, 'success');
         renderManageCategories();
     }
 }

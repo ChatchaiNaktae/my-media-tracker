@@ -1,3 +1,5 @@
+import { escapeHtml } from './utils.js';
+
 export function openItemModal() {
     const modal = document.getElementById('itemModal');
     if (modal) modal.classList.remove('hidden');
@@ -50,25 +52,25 @@ export function showToast(message, type = 'success') {
     const config = {
         success: {
             bg: 'border-l-[#28a745]',
-            icon: '✅',
+            icon: '<i class="fa-solid fa-check" aria-hidden="true"></i>',
             title: 'Success',
             textColor: 'text-[#28a745]'
         },
         error: {
             bg: 'border-l-[#dc3545]',
-            icon: '❌',
+            icon: '<i class="fa-solid fa-xmark" aria-hidden="true"></i>',
             title: 'Error',
             textColor: 'text-[#dc3545]'
         },
         warning: {
             bg: 'border-l-[#f0ad4e]',
-            icon: '⚠️',
+            icon: '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>',
             title: 'Warning',
             textColor: 'text-[#f0ad4e]'
         },
         info: {
             bg: 'border-l-[#17a2b8]',
-            icon: 'ℹ️',
+            icon: '<i class="fa-solid fa-circle-info" aria-hidden="true"></i>',
             title: 'Info',
             textColor: 'text-[#17a2b8]'
         }
@@ -98,15 +100,16 @@ export function showToast(message, type = 'success') {
             </div>
 
             <div class="text-[0.85em] opacity-90 break-words">
-                ${message}
+                ${escapeHtml(message)}
             </div>
         </div>
 
         <button
             onclick="this.parentElement.remove()"
-            class="opacity-50 hover:opacity-100 text-lg transition"
+            class="opacity-50 hover:opacity-100 text-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark rounded-full w-7 h-7 flex items-center justify-center shrink-0"
+            aria-label="Close notification"
         >
-            ×
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         </button>
     `;
 

@@ -47,7 +47,7 @@ export async function importData(event) {
 
                 const label = event.target.parentElement;
                 const originalText = label.innerHTML;
-                label.innerHTML = "⏳ Loading...";
+                label.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Loading...';
                 label.style.pointerEvents = "none";
 
                 const currentItems = typeof window.getAllItems === 'function' ? window.getAllItems() : [];
@@ -73,11 +73,11 @@ export async function importData(event) {
                 label.innerHTML = originalText;
                 label.style.pointerEvents = "auto";
 
-                showToast("✅ นำเข้าข้อมูลเสร็จสิ้น!", 'success');
+                showToast("นำเข้าข้อมูลเสร็จสิ้น!", 'success');
                 if (typeof window.loadItems === 'function') window.loadItems(); 
             }
         } catch (error) {
-            showToast("❌ ไฟล์ไม่ถูกต้อง หรือเกิดข้อผิดพลาดในการอ่านข้อมูล", 'error');
+            showToast("ไฟล์ไม่ถูกต้อง หรือเกิดข้อผิดพลาดในการอ่านข้อมูล", 'error');
             console.error("Import Error:", error);
         }
     };
@@ -92,12 +92,12 @@ export async function fetchMediaData() {
     const btn = document.getElementById('autofillBtn');
 
     if (!title) {
-        showToast("⚠️ โปรดระบุชื่อเรื่องที่ต้องการค้นหาก่อนครับ!", "error");
+        showToast("โปรดระบุชื่อเรื่องที่ต้องการค้นหาก่อนครับ!", "error");
         return;
     }
 
     const originalText = btn.innerHTML;
-    btn.innerHTML = "⏳ กำลังหา...";
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> กำลังหา...';
     btn.disabled = true;
 
     try {
@@ -125,13 +125,13 @@ export async function fetchMediaData() {
                 window.refreshCategoryDropdown(window.getAllItems());
             }
 
-            showToast(`✅ ดึงข้อมูลเรื่อง "${data.title}" สำเร็จ!`, 'success');
+            showToast(`ดึงข้อมูลเรื่อง "${data.title}" สำเร็จ!`, 'success');
         } else {
-            showToast("❌ ไม่พบข้อมูลเรื่องนี้ในฐานข้อมูลครับ", 'warning');
+            showToast("ไม่พบข้อมูลเรื่องนี้ในฐานข้อมูลครับ", 'warning');
         }
     } catch (error) {
         console.error("Autofill Error:", error);
-        showToast("❌ เกิดข้อผิดพลาดในการเชื่อมต่อกับ API ครับ", 'error');
+        showToast("เกิดข้อผิดพลาดในการเชื่อมต่อกับ API ครับ", 'error');
     } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;

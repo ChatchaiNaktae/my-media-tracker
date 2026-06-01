@@ -45,12 +45,13 @@ document.getElementById('installAppBtn')?.addEventListener('click', async () => 
 window.previewCoverImage = function() {
     const url = document.getElementById('coverInput').value.trim();
     const preview = document.getElementById('coverPreview');
-    if (url) {
+    // Only allow http:// or https:// protocols — reject data:, javascript:, blob:, etc.
+    if (url && /^(https?):\/\//i.test(url)) {
         preview.src = url;
-        preview.classList.remove('hidden'); 
+        preview.classList.remove('hidden');
     } else {
         preview.src = '';
-        preview.classList.add('hidden'); 
+        preview.classList.add('hidden');
     }
 }
 
@@ -75,5 +76,7 @@ window.onscroll = function() {
     }
 };
 
-window.checkAuth();
-if (typeof window.updateUndoRedoUI === 'function') window.updateUndoRedoUI();
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof window.checkAuth === 'function') window.checkAuth();
+    if (typeof window.updateUndoRedoUI === 'function') window.updateUndoRedoUI();
+});

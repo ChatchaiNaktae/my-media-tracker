@@ -15,10 +15,20 @@
     <link rel="stylesheet" href="output.css">
 
     <script>
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            document.documentElement.classList.add('dark-mode');
-        }
+        (function () {
+            var saved = localStorage.getItem('theme');
+            var isDark;
+            if (saved === 'dark') {
+                isDark = true;
+            } else if (saved === 'light') {
+                isDark = false;
+            } else {
+                isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            }
+            if (isDark) {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
     </script>
 </head>
 
@@ -29,7 +39,7 @@
         <div
             class="bg-containerLight dark:bg-containerDark p-8 rounded-2xl w-full max-w-[400px] shadow-2xl border border-gray-200 dark:border-zinc-800 relative overflow-hidden">
             <div id="loginSection" class="flex flex-col transition-all duration-300">
-                <h2 class="text-2xl font-bold mb-6 text-center">🔐 Login</h2>
+                <h2 class="text-2xl font-bold mb-6 text-center"><i class="fa-solid fa-lock text-xl" aria-hidden="true"></i> Login</h2>
                 <div class="flex flex-col gap-4">
                     <input type="text" id="usernameInput" placeholder="Username"
                         class="p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
@@ -37,11 +47,12 @@
                         <input type="password" id="passwordInput" placeholder="Password"
                             class="w-full p-3 pr-12 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
                         <button type="button" onclick="togglePassword('passwordInput', this)"
-                            class="absolute right-4 top-1/2 -translate-y-1/2 text-[1.2em] opacity-50 hover:opacity-100 transition-opacity focus:outline-none">
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-[1.2em] opacity-50 hover:opacity-100 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-full w-9 h-9 flex items-center justify-center min-w-[44px] min-h-[44px]"
+                            aria-label="Show password">
                             <i class="fa-solid fa-eye"></i> </button>
                     </div>
                     <button onclick="handleLogin()"
-                        class="p-3 bg-accent text-white font-bold rounded-xl hover:opacity-90 transition-opacity">Login</button>
+                        class="p-3 min-h-[48px] bg-accent text-white font-bold rounded-xl hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2">Login</button>
                     <div class="text-center mt-2">
                         <span class="text-sm opacity-60">Don't have an account? </span>
                         <button onclick="toggleAuthView('register')"
@@ -52,7 +63,7 @@
             </div>
 
             <div id="registerSection" class="flex flex-col hidden transition-all duration-300">
-                <h2 class="text-2xl font-bold mb-6 text-center">📝 Create Account</h2>
+                <h2 class="text-2xl font-bold mb-6 text-center"><i class="fa-solid fa-pen-to-square text-xl" aria-hidden="true"></i> Create Account</h2>
                 <div class="flex flex-col gap-4">
                     <input type="text" id="regUsernameInput" placeholder="New Username"
                         class="p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
@@ -60,7 +71,8 @@
                         <input type="password" id="regPasswordInput" placeholder="New Password"
                             class="w-full p-3 pr-12 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
                         <button type="button" onclick="togglePassword('regPasswordInput', this)"
-                            class="absolute right-4 top-1/2 -translate-y-1/2 text-[1.2em] opacity-50 hover:opacity-100 transition-opacity focus:outline-none">
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-[1.2em] opacity-50 hover:opacity-100 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-full w-9 h-9 flex items-center justify-center min-w-[44px] min-h-[44px]"
+                            aria-label="Show password">
                             <i class="fa-solid fa-eye"></i>
                         </button>
                     </div>
@@ -68,12 +80,13 @@
                         <input type="password" id="regConfirmPassword" placeholder="Confirm Password"
                             class="w-full p-3 pr-12 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
                         <button type="button" onclick="togglePassword('regConfirmPassword', this)"
-                            class="absolute right-4 top-1/2 -translate-y-1/2 text-[1.2em] opacity-50 hover:opacity-100 transition-opacity focus:outline-none">
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-[1.2em] opacity-50 hover:opacity-100 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-full w-9 h-9 flex items-center justify-center min-w-[44px] min-h-[44px]"
+                            aria-label="Show password">
                             <i class="fa-solid fa-eye"></i>
                         </button>
                     </div>
                     <button onclick="handleRegister(event)"
-                        class="p-3 bg-[#28a745] text-white font-bold rounded-xl hover:opacity-90 transition-opacity">Register</button>
+                        class="p-3 min-h-[48px] bg-[#28a745] text-white font-bold rounded-xl hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#28a745] focus-visible:ring-offset-2">Register</button>
                     <div class="text-center mt-2">
                         <span class="text-sm opacity-60">Already have an account? </span>
                         <button onclick="toggleAuthView('login')"
@@ -112,7 +125,7 @@
                     <h2 id="modalTitle"
                         class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-800 dark:text-white flex items-center gap-3">
 
-                        <span class="text-accent dark:text-accentDark">✚</span>
+                        <span class="text-accent dark:text-accentDark"><i class="fa-solid fa-plus" aria-hidden="true"></i></span>
                         เพิ่มรายการใหม่
                     </h2>
 
@@ -121,7 +134,7 @@
                     </p>
                 </div>
 
-                <button onclick="closeItemModal()" class="w-10 h-10 rounded-full
+                <button onclick="closeItemModal()" class="w-10 h-10 min-w-[44px] min-h-[44px] rounded-full
                 flex items-center justify-center
 
                 bg-gray-200 dark:bg-zinc-800
@@ -130,7 +143,8 @@
                 text-gray-600 dark:text-zinc-400
                 hover:text-white
 
-                transition-colors duration-200">
+                transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-2"
+                aria-label="Close modal">
 
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -168,9 +182,11 @@
 
                             border border-accent/20
 
-                            transition-colors duration-200">
+                            transition-colors duration-200
+                            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark min-h-[40px]"
+                            aria-label="Auto-fill from Jikan API">
 
-                                🔍 ดึงข้อมูล
+                                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> ดึงข้อมูล
                             </button>
                         </div>
 
@@ -251,9 +267,11 @@
 
                         hover:opacity-90
 
-                        transition-opacity duration-200">
+                        transition-opacity duration-200
+                        min-h-[48px]
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-2">
 
-                            ✨ Add to List
+                            <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Add to List
                         </button>
 
                         <button id="cancelBtn" onclick="cancelEdit()" class="hidden px-6 py-3.5 rounded-2xl
@@ -264,7 +282,9 @@
                         text-gray-800 dark:text-white
                         font-semibold
 
-                        transition-colors duration-200">
+                        transition-colors duration-200
+                        min-h-[48px]
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-2">
 
                             Cancel
                         </button>
@@ -278,13 +298,13 @@
         class="fixed bottom-5 right-5 bg-containerLight dark:bg-containerDark p-2.5 rounded-[50px] shadow-[0_4px_15px_rgba(0,0,0,0.2)] flex gap-2.5 z-[1000] border border-gray-200 dark:border-zinc-800">
         <div class="w-px h-6 bg-gray-300 dark:bg-zinc-700 mx-1 self-center"></div>
         <button onclick="exportData()"
-            class="px-[15px] py-2 bg-[#28a745] text-white border-none rounded-xl text-[0.9em] hover:bg-[#218838] transition-all shadow-sm"
-            title="เซฟข้อมูลลงเครื่อง">💾 Export</button>
+            class="px-[15px] py-2 min-h-[44px] bg-[#28a745] text-white border-none rounded-xl text-[0.9em] hover:bg-[#218838] transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#28a745] focus-visible:ring-offset-2"
+            title="เซฟข้อมูลลงเครื่อง" aria-label="Export data"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Export</button>
         <label
-            class="px-[15px] py-2 bg-[#17a2b8] text-white border-none rounded-xl text-[0.9em] hover:bg-[#138496] transition-all shadow-sm cursor-pointer flex items-center"
+            class="px-[15px] py-2 min-h-[44px] bg-[#17a2b8] text-white border-none rounded-xl text-[0.9em] hover:bg-[#138496] transition-all shadow-sm cursor-pointer flex items-center focus-within:ring-2 focus-within:ring-[#17a2b8] focus-within:ring-offset-2 rounded-xl"
             title="โหลดข้อมูลจากเครื่อง">
-            📂 Import
-            <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(event)">
+            <i class="fa-solid fa-folder-open" aria-hidden="true"></i> Import
+            <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(event)" aria-label="Import data from file">
         </label>
     </div>
 
@@ -295,7 +315,8 @@
             <h2 class="text-2xl font-bold m-0 flex-1">Media Tracker (บันทึกการดู/เล่น)</h2>
             <div class="flex items-center gap-3">
                 <button id="installAppBtn"
-                    class="hidden bg-gradient-to-r from-accent to-accentDark text-white px-4 py-1.5 rounded-full font-bold shadow-md hover:scale-105 transition-transform text-sm flex items-center gap-2 border-none cursor-pointer">
+                    class="hidden bg-gradient-to-r from-accent to-accentDark text-white px-4 py-1.5 rounded-full font-bold shadow-md hover:scale-105 transition-transform text-sm flex items-center gap-2 border-none cursor-pointer min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-2"
+                    aria-label="Install app">
                     <i class="fa-solid fa-download"></i> Install
                 </button>
                 <div id="userInfoPanel"
@@ -304,14 +325,14 @@
                         id="currentUsernameDisplay">User</span>
                     <div class="w-px h-4 bg-gray-300 dark:bg-zinc-700"></div>
                     <button onclick="handleLogout()"
-                        class="text-sm font-bold text-[#dc3545] hover:opacity-70 transition-opacity" title="ออกจากระบบ">
+                        class="text-sm font-bold text-[#dc3545] hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc3545] focus-visible:ring-offset-1 rounded px-1 min-h-[44px]" title="ออกจากระบบ" aria-label="Logout">
                         Logout
                     </button>
                 </div>
                 <button
-                    class="theme-toggle bg-bgLight dark:bg-bgDark border-2 border-accent dark:border-accentDark text-gray-800 dark:text-gray-200 w-10 h-10 rounded-full cursor-pointer text-[1.2rem] flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-[0_0_10px_rgba(0,0,0,0.1)] shrink-0"
-                    onclick="toggleTheme()">
-                    <span id="themeIcon">☀️</span>
+                    class="theme-toggle bg-bgLight dark:bg-bgDark border-2 border-accent dark:border-accentDark text-gray-800 dark:text-gray-200 w-10 h-10 rounded-full cursor-pointer text-[1.2rem] flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-[0_0_10px_rgba(0,0,0,0.1)] shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-2"
+                    id="themeToggleBtn" aria-label="Toggle dark mode">
+                    <span id="themeIcon"><i class="fa-solid fa-sun" aria-hidden="true"></i></span>
                 </button>
             </div>
         </div>
@@ -319,25 +340,25 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-[15px] mb-[25px]">
             <div
                 class="bg-bgLight dark:bg-bgDark p-[15px] rounded-xl border border-gray-200 dark:border-zinc-800 text-center">
-                <h3 class="m-0 text-[0.85em] opacity-70 font-semibold">📚 All Items (ทั้งหมด)</h3>
+                <h3 class="m-0 text-[0.85em] opacity-70 font-semibold"><i class="fa-solid fa-layer-group text-sm" aria-hidden="true"></i> All Items (ทั้งหมด)</h3>
                 <span id="totalCount"
                     class="block text-[1.6em] font-bold mt-[5px] text-gray-800 dark:text-gray-200">0</span>
             </div>
             <div
                 class="bg-bgLight dark:bg-bgDark p-[15px] rounded-xl border border-gray-200 dark:border-zinc-800 text-center">
-                <h3 class="m-0 text-[0.85em] opacity-70 font-semibold">✅ Finished (จบแล้ว)</h3>
+                <h3 class="m-0 text-[0.85em] opacity-70 font-semibold"><i class="fa-solid fa-check-circle text-sm" aria-hidden="true"></i> Finished (จบแล้ว)</h3>
                 <span id="finishedCount" class="block text-[1.6em] font-bold mt-[5px] text-[#28a745]">0</span>
             </div>
             <div
                 class="bg-bgLight dark:bg-bgDark p-[15px] rounded-xl border border-gray-200 dark:border-zinc-800 text-center">
-                <h3 class="m-0 text-[0.85em] opacity-70 font-semibold">⏳ To Do (ดองไว้)</h3>
+                <h3 class="m-0 text-[0.85em] opacity-70 font-semibold"><i class="fa-solid fa-hourglass-half text-sm" aria-hidden="true"></i> To Do (ดองไว้)</h3>
                 <span id="todoCount" class="block text-[1.6em] font-bold mt-[5px] text-[#f0ad4e]">0</span>
             </div>
         </div>
 
         <div
             class="mb-[25px] p-[20px] bg-bgLight dark:bg-bgDark rounded-xl border border-gray-200 dark:border-zinc-800 shadow-sm">
-            <h3 class="text-center mb-4 text-[0.85em] opacity-70 font-semibold uppercase tracking-wider">📊
+            <h3 class="text-center mb-4 text-[0.85em] opacity-70 font-semibold uppercase tracking-wider"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i>
                 สัดส่วนหมวดหมู่ (Category Distribution)</h3>
             <div class="relative h-[230px] flex justify-center">
                 <canvas id="mediaChart"></canvas>
@@ -346,19 +367,21 @@
 
         <div class="flex flex-col sm:flex-row gap-[10px] mb-[20px]">
             <button onclick="openItemModal()"
-                class="w-full sm:w-auto px-6 py-3 bg-accent dark:bg-accentDark text-white font-bold rounded-xl shadow-md hover:scale-105 transition-all flex items-center justify-center gap-2 shrink-0 border-none">
-                ➕ Add New Item
+                class="w-full sm:w-auto px-6 py-3 bg-accent dark:bg-accentDark text-white font-bold rounded-xl shadow-md hover:scale-105 transition-all flex items-center justify-center gap-2 shrink-0 border-none min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-2">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i> Add New Item
             </button>
             <div class="flex-1 min-w-0 relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none opacity-60">
-                    🔍
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                 </div>
                 <input type="text" id="searchInput" placeholder="ค้นหาชื่อเรื่อง หรือตัวย่อ..." onkeyup="handleSearch()"
-                    class="w-full h-full min-h-[48px] pl-[38px] pr-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all m-0">
+                    class="w-full h-full min-h-[48px] pl-[38px] pr-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all m-0 focus-visible:outline-none focus-visible:border-accent dark:focus-visible:border-accentDark focus-visible:ring-[3px] focus-visible:ring-accent/20"
+                    aria-label="Search media">
             </div>
             <div class="w-full sm:w-[200px] shrink-0">
                 <select id="sortInput" onchange="handleSort()"
-                    class="w-full h-full min-h-[48px] p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all m-0">
+                    class="w-full h-full min-h-[48px] p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all m-0 focus-visible:outline-none focus-visible:border-accent dark:focus-visible:border-accentDark focus-visible:ring-[3px] focus-visible:ring-accent/20"
+                    aria-label="Sort items">
                     <option value="newest">🆕 ใหม่สุดไปเก่าสุด</option>
                     <option value="oldest">⏳ เก่าสุดไปใหม่สุด</option>
                     <option value="best">⭐ คะแนนสูงสุด</option>
@@ -372,16 +395,16 @@
 
         <div class="flex gap-[10px] mb-[20px] border-b border-gray-200 dark:border-zinc-700 pb-[10px] overflow-x-auto">
             <button type="button"
-                class="filter-btn active bg-transparent text-gray-800 dark:text-gray-200 px-[12px] py-[8px] opacity-60 font-semibold transition-all whitespace-nowrap"
+                class="filter-btn active bg-transparent text-gray-800 dark:text-gray-200 px-[12px] py-[8px] min-h-[44px] opacity-60 font-semibold transition-all whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-1 rounded-lg"
                 onclick="setFilter(event, 'All')">ทั้งหมด</button>
             <button type="button"
-                class="filter-btn bg-transparent text-gray-800 dark:text-gray-200 px-[12px] py-[8px] opacity-60 font-semibold transition-all whitespace-nowrap"
+                class="filter-btn bg-transparent text-gray-800 dark:text-gray-200 px-[12px] py-[8px] min-h-[44px] opacity-60 font-semibold transition-all whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-1 rounded-lg"
                 onclick="setFilter(event, 'Progress')">ความคืบหน้า</button>
             <button type="button"
-                class="filter-btn bg-transparent text-gray-800 dark:text-gray-200 px-[12px] py-[8px] opacity-60 font-semibold transition-all whitespace-nowrap"
+                class="filter-btn bg-transparent text-gray-800 dark:text-gray-200 px-[12px] py-[8px] min-h-[44px] opacity-60 font-semibold transition-all whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-1 rounded-lg"
                 onclick="setFilter(event, 'Planned')">ที่ต้องเก็บ</button>
             <button type="button"
-                class="filter-btn bg-transparent text-gray-800 dark:text-gray-200 px-[12px] py-[8px] opacity-60 font-semibold transition-all whitespace-nowrap"
+                class="filter-btn bg-transparent text-gray-800 dark:text-gray-200 px-[12px] py-[8px] min-h-[44px] opacity-60 font-semibold transition-all whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-1 rounded-lg"
                 onclick="setFilter(event, 'Completed')">จบแล้ว</button>
         </div>
 
@@ -389,7 +412,8 @@
             class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-[660px] bg-containerLight/95 dark:bg-containerDark/95 backdrop-blur-md p-4 rounded-2xl border border-accent/30 dark:border-accentDark/30 shadow-[0_10px_30px_rgba(0,0,0,0.25)] flex items-center justify-between gap-3 z-[2000] hidden transition-all duration-300">
             <div class="flex items-center gap-3">
                 <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)"
-                    class="w-5 h-5 cursor-pointer accent-accent dark:accent-accentDark rounded-md">
+                    class="w-5 h-5 cursor-pointer accent-accent dark:accent-accentDark rounded-md focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-1"
+                    aria-label="Select all visible items">
                 <label for="selectAllCheckbox"
                     class="font-semibold text-gray-800 dark:text-gray-200 select-none cursor-pointer">
                     <span id="selectCountText">เลือกแล้ว 0 รายการ</span> <span class="hidden sm:inline">(Select
@@ -397,9 +421,9 @@
                 </label>
             </div>
             <button id="deleteSelectedBtn" onclick="deleteSelectedItems()"
-                class="px-5 py-2.5 bg-[#dc3545] text-white rounded-xl text-sm font-semibold hover:opacity-80 transition-all shadow-md flex items-center gap-2 border-none cursor-pointer"
-                disabled>
-                🗑️ ลบรายการที่เลือก <span class="hidden sm:inline">(Delete Selected)</span>
+                class="px-5 py-2.5 min-h-[44px] bg-[#dc3545] text-white rounded-xl text-sm font-semibold hover:opacity-80 transition-all shadow-md flex items-center gap-2 border-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc3545] focus-visible:ring-offset-2"
+                disabled aria-label="Delete selected items">
+                <i class="fa-solid fa-trash-can" aria-hidden="true"></i> ลบรายการที่เลือก
             </button>
         </div>
 
@@ -407,8 +431,8 @@
 
         <div id="loadMoreContainer" class="flex justify-center mt-[20px] mb-[10px] hidden">
             <button onclick="loadMoreItems()"
-                class="px-[25px] py-[10px] bg-gray-200 dark:bg-zinc-800 text-gray-800 dark:text-gray-200 font-semibold rounded-xl hover:bg-gray-300 dark:hover:bg-zinc-700 transition-colors shadow-sm flex items-center gap-2">
-                ⬇️ โหลดเพิ่มเติม (Load More)
+                class="px-[25px] py-[10px] min-h-[48px] bg-gray-200 dark:bg-zinc-800 text-gray-800 dark:text-gray-200 font-semibold rounded-xl hover:bg-gray-300 dark:hover:bg-zinc-700 transition-colors shadow-sm flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-2">
+                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i> โหลดเพิ่มเติม
             </button>
         </div>
     </div>
@@ -419,7 +443,8 @@
     <script src="src/js/dropdown.js" defer></script>
 
     <button id="scrollToTopBtn" onclick="scrollToTop()"
-        class="fixed bottom-[100px] right-8 bg-accent dark:bg-accentDark text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 transition-all duration-300 translate-y-10 pointer-events-none z-[999] hover:scale-110">
+        class="fixed bottom-[100px] right-8 bg-accent dark:bg-accentDark text-white w-12 h-12 min-w-[48px] min-h-[48px] rounded-full shadow-lg flex items-center justify-center opacity-0 transition-all duration-300 translate-y-10 pointer-events-none z-[999] hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-2"
+        aria-label="Scroll to top">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
             <path d="m18 15-6-6-6 6" />
@@ -429,16 +454,16 @@
     <div id="manageCategoryModal" class="fixed inset-0 z-[6000] hidden flex items-center justify-center p-4 sm:p-6 bg-black/80 transition-opacity duration-200">
         <div class="w-full max-w-[400px] bg-containerLight dark:bg-zinc-900 rounded-3xl p-5 sm:p-7 shadow-2xl relative animate-[modalPop_.18s_ease] border border-gray-200 dark:border-zinc-800">
             <h3 class="text-xl font-bold mb-4 text-gray-800 dark:text-white flex items-center gap-2">
-                ⚙️ จัดการหมวดหมู่ของฉัน
+                <i class="fa-solid fa-gear" aria-hidden="true"></i> จัดการหมวดหมู่ของฉัน
             </h3>
             <div id="customCategoryList" class="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar pr-2 mb-5">
                 </div>
-            <button onclick="closeManageCategoryModal()" class="w-full py-3 rounded-xl bg-gray-200 dark:bg-zinc-800 hover:bg-gray-300 dark:hover:bg-zinc-700 text-gray-800 dark:text-white font-semibold transition-colors duration-200">
+            <button onclick="closeManageCategoryModal()" class="w-full py-3 rounded-xl bg-gray-200 dark:bg-zinc-800 hover:bg-gray-300 dark:hover:bg-zinc-700 text-gray-800 dark:text-white font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark min-h-[48px]">
                 ปิดหน้าต่าง
             </button>
         </div>
     </div>
-    <div id="toastContainer" class="fixed top-5 right-5 z-[99999] flex flex-col gap-3 pointer-events-none"></div>
+    <div id="toastContainer" class="fixed top-5 right-5 z-[99999] flex flex-col gap-3 pointer-events-none" role="status" aria-live="polite" aria-atomic="true"></div>
 </body>
 
 </html>

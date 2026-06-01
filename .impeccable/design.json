@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-01T00:00:00.000Z",
+  "title": "Design System: My Media Tracker",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Confident Blue",
+        "canonical": "#2563EB",
+        "tonalRamp": ["#1E3A8A", "#1D4ED8", "#2563EB", "#3B82F6", "#60A5FA", "#93C5FD", "#BFDBFE", "#DBEAFE", "#EFF6FF"]
+      },
+      "secondary": {
+        "role": "secondary",
+        "displayName": "Fresh Green",
+        "canonical": "#10B981",
+        "tonalRamp": ["#064E3B", "#065F46", "#047857", "#10B981", "#34D399", "#6EE7B7", "#A7F3D0", "#D1FAE5", "#ECFDF5"]
+      },
+      "bg-light": {
+        "role": "neutral",
+        "displayName": "Cloud White",
+        "canonical": "#F4F6F8",
+        "tonalRamp": ["#9CA3AF", "#D1D5DB", "#E5E7EB", "#F3F4F6", "#F4F6F8", "#F9FAFB", "#FAFBFC", "#FDFDFE", "#FFFFFF"]
+      },
+      "bg-dark": {
+        "role": "neutral",
+        "displayName": "Deep Slate",
+        "canonical": "#0F172A",
+        "tonalRamp": ["#020617", "#0F172A", "#1E293B", "#334155", "#475569", "#64748B", "#94A3B8", "#CBD5E1", "#E2E8F0"]
+      },
+      "container-light": {
+        "role": "neutral",
+        "displayName": "Surface White",
+        "canonical": "#FFFFFF"
+      },
+      "container-dark": {
+        "role": "neutral",
+        "displayName": "Slate Panel",
+        "canonical": "#1E293B"
+      },
+      "item-light": {
+        "role": "neutral",
+        "displayName": "Mist Gray",
+        "canonical": "#E2E8F0"
+      },
+      "item-dark": {
+        "role": "neutral",
+        "displayName": "Slate Item",
+        "canonical": "#334155"
+      },
+      "accent-highlight": {
+        "role": "tertiary",
+        "displayName": "Warm Amber",
+        "canonical": "#F59E0B"
+      },
+      "danger": {
+        "role": "functional",
+        "displayName": "Danger Red",
+        "canonical": "#DC2626"
+      },
+      "success": {
+        "role": "functional",
+        "displayName": "Bootstrap Green",
+        "canonical": "#28A745"
+      }
+    },
+    "typographyMeta": {
+      "body": { "displayName": "Body", "purpose": "Primary text — reviews, descriptions, form inputs. 16px/1.6." },
+      "headline": { "displayName": "Headline", "purpose": "Section titles, stat numbers, modal headers. Bold, responsive clamp." },
+      "title": { "displayName": "Title", "purpose": "Item titles within list cards, category headers. Semibold, scannable." },
+      "label": { "displayName": "Label", "purpose": "Stat labels, filter pills, badge text. Small, tracked, muted opacity." }
+    },
+    "shadows": [
+      { "name": "modal-shadow", "value": "0 20px 60px rgba(0,0,0,0.45)", "purpose": "Full-screen overlay modals (login, item editor, manage categories)." },
+      { "name": "soft-shadow", "value": "0 8px 30px rgba(0,0,0,0.12)", "purpose": "Container cards in light mode, subtle elevation." },
+      { "name": "button-shadow", "value": "0 4px 15px rgba(0,0,0,0.2)", "purpose": "Floating action buttons and export/import toolbar." },
+      { "name": "select-bar-shadow", "value": "0 10px 30px rgba(0,0,0,0.25)", "purpose": "Multiselect controls bar — strong lift for fixed-bottom overlay." }
+    ],
+    "motion": [
+      { "name": "ease-modal-pop", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "duration": "180ms", "purpose": "Modal entrance animation (modalPop)." },
+      { "name": "ease-fade", "value": "ease", "duration": "250ms", "purpose": "Fade-in for toasts, notifications, overlays." },
+      { "name": "ease-float", "value": "ease", "duration": "300ms", "purpose": "Float-up entrance for staggered list items." },
+      { "name": "ease-spring", "value": "cubic-bezier(0.68, -0.55, 0.265, 1.55)", "duration": "400ms", "purpose": "Toast slide-in from right with spring overshoot." },
+      { "name": "ease-progress", "value": "ease-in-out", "duration": "500ms", "purpose": "Progress bar width transitions." },
+      { "name": "ease-hover", "value": "ease", "duration": "200ms", "purpose": "Scale and color transitions on hover for buttons and cards." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button (Gradient)",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main CTA — 'Add New Item', 'Add to List', 'Install'. Blue-to-green gradient.",
+      "html": "<button class=\"ds-btn-primary\">➕ Add New Item</button>",
+      "css": ".ds-btn-primary { background: linear-gradient(to right, #2563EB, #10B981); color: #FFFFFF; font-weight: 700; padding: 14px 24px; border: none; border-radius: 16px; font-family: 'Prompt', sans-serif; cursor: pointer; transition: opacity 0.2s, transform 0.2s; font-size: 1rem; } .ds-btn-primary:hover { opacity: 0.9; transform: scale(1.02); } .ds-btn-primary:active { transform: scale(0.98); }"
+    },
+    {
+      "name": "Success Button (Export/Register)",
+      "kind": "button",
+      "refersTo": "button-success",
+      "description": "Standalone success action — 'Export Data', 'Register'. Solid green, no gradient.",
+      "html": "<button class=\"ds-btn-success\">💾 Export</button>",
+      "css": ".ds-btn-success { background: #28A745; color: #FFFFFF; font-weight: 600; padding: 8px 15px; border: none; border-radius: 12px; font-family: 'Prompt', sans-serif; cursor: pointer; transition: background 0.2s; font-size: 0.9rem; box-shadow: 0 2px 6px rgba(0,0,0,0.15); } .ds-btn-success:hover { background: #218838; }"
+    },
+    {
+      "name": "Danger Button (Delete)",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Destructive actions — 'Delete Selected', 'Logout'. Solid red.",
+      "html": "<button class=\"ds-btn-danger\">🗑️ Delete</button>",
+      "css": ".ds-btn-danger { background: #DC2626; color: #FFFFFF; font-weight: 600; padding: 10px 20px; border: none; border-radius: 12px; font-family: 'Prompt', sans-serif; cursor: pointer; transition: opacity 0.2s; font-size: 0.85rem; box-shadow: 0 4px 12px rgba(0,0,0,0.2); } .ds-btn-danger:hover { opacity: 0.8; }"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Text input in modals — title, URL, tags, description. Light and dark variants.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"🎬 ชื่อเรื่อง (Title)\" />",
+      "css": ".ds-input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #D1D5DB; background: #F9FBF; color: #1F2937; font-family: 'Prompt', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; } .ds-input::placeholder { color: #9CA3AF; } .ds-input:focus { border-color: #2563EB; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); }"
+    },
+    {
+      "name": "Select Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Dropdown select — category, status, rating. Matches input styling.",
+      "html": "<select class=\"ds-select\"><option>🎮 Game (เกม)</option><option>🎬 Movie</option></select>",
+      "css": ".ds-select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #D1D5DB; background: #F9FBF; color: #1F2937; font-family: 'Prompt', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; cursor: pointer; } .ds-select:focus { border-color: #2563EB; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); }"
+    },
+    {
+      "name": "Stat Card",
+      "kind": "card",
+      "refersTo": "stat-card",
+      "description": "Dashboard stat boxes — 'All Items', 'Finished', 'To Do'. Grid of 3.",
+      "html": "<div class=\"ds-stat-card\"><h3 class=\"ds-stat-label\">📚 All Items (ทั้งหมด)</h3><span class=\"ds-stat-value\">42</span></div>",
+      "css": ".ds-stat-card { background: #F4F6F8; border-radius: 12px; border: 1px solid #E2E8F0; padding: 15px; text-align: center; font-family: 'Prompt', sans-serif; } .ds-stat-label { margin: 0; font-size: 0.85em; opacity: 0.7; font-weight: 600; color: #1F2937; } .ds-stat-value { display: block; font-size: 1.6em; font-weight: 700; margin-top: 5px; color: #1F2937; }"
+    },
+    {
+      "name": "Item Card",
+      "kind": "card",
+      "refersTo": "card-container",
+      "description": "Individual media entry in category list. Shows title, progress, rating, actions.",
+      "html": "<div class=\"ds-item-card\"><div class=\"ds-item-info\"><span class=\"ds-item-title\">Attack on Titan</span><span class=\"ds-item-rating\">⭐⭐⭐⭐⭐</span><div class=\"ds-progress-wrap\"><div class=\"ds-progress-bar\" style=\"width: 75%\"></div></div><span class=\"ds-progress-text\">25 / 33 episodes</span></div></div>",
+      "css": ".ds-item-card { margin-bottom: 12px; padding: 15px; border-radius: 16px; display: flex; justify-content: space-between; align-items: flex-start; transition: transform 0.2s, box-shadow 0.2s; background: #E2E8F0; font-family: 'Prompt', sans-serif; } .ds-item-card:hover { transform: scale(1.01); box-shadow: 0 4px 16px rgba(0,0,0,0.12); } .ds-item-info { flex: 1; display: flex; flex-direction: column; margin-right: 20px; min-width: 0; } .ds-item-title { font-weight: 600; font-size: 1.1em; overflow-wrap: break-word; color: #1F2937; } .ds-item-rating { color: #F59E0B; margin-left: 8px; } .ds-progress-wrap { width: 100%; height: 8px; margin: 10px 0; overflow: hidden; border-radius: 12px; background: rgba(0,0,0,0.1); } .ds-progress-bar { height: 100%; background: #2563EB; transition: width 0.5s ease-in-out; border-radius: 12px; } .ds-progress-text { font-size: 0.85em; font-weight: 600; display: flex; align-items: center; color: #4B5563; }"
+    },
+    {
+      "name": "Filter Pill",
+      "kind": "chip",
+      "refersTo": "button-ghost",
+      "description": "Category status filter — 'ทั้งหมด', 'ความคืบหน้า', 'จบแล้ว'. Horizontal scroll row.",
+      "html": "<button class=\"ds-filter ds-filter-active\">ทั้งหมด</button>\n<button class=\"ds-filter\">จบแล้ว</button>",
+      "css": ".ds-filter { background: transparent; color: #1F2937; padding: 8px 12px; border: none; border-bottom: 3px solid transparent; opacity: 0.6; font-weight: 600; font-family: 'Prompt', sans-serif; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; } .ds-filter:hover { opacity: 0.85; } .ds-filter-active { opacity: 1; color: #2563EB; border-bottom: 3px solid #2563EB; }"
+    },
+    {
+      "name": "Toast Notification",
+      "kind": "custom",
+      "description": "Slide-in toast notification from top-right. Spring easing.",
+      "html": "<div class=\"ds-toast\"><span class=\"ds-toast-msg\">✅ Item added successfully!</span></div>",
+      "css": ".ds-toast { background: #FFFFFF; border-left: 4px solid #10B981; padding: 12px 20px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); font-family: 'Prompt', sans-serif; font-size: 0.9rem; color: #1F2937; pointer-events: auto; animation: ds-slideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; } @keyframes ds-slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }"
+    },
+    {
+      "name": "Theme Toggle Button",
+      "kind": "button",
+      "description": "Circular sun/moon toggle in the top-right header area. Bordered ring in accent color.",
+      "html": "<button class=\"ds-theme-toggle\"><span class=\"ds-theme-icon\">☀️</span></button>",
+      "css": ".ds-theme-toggle { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #2563EB; background: #F4F6F8; color: #1F2937; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: all 0.3s; flex-shrink: 0; } .ds-theme-toggle:hover { transform: scale(1.1); box-shadow: 0 0 10px rgba(0,0,0,0.1); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Media Shelf",
+    "overview": "A clean, organized personal library — everything in its place, easy to browse, and satisfying to add to. My Media Tracker feels like a well-designed media shelf in your living room: warm but structured, friendly but capable. The interface balances data richness (charts, stats, progress bars) with visual breathing room, so users never feel buried by their own collection.\n\nDark mode is a first-class citizen, not an afterthought. Both themes are equally polished — the dark theme uses deep slate tones (#0F172A → #334155) rather than pure blacks, reducing eye strain during long evening tracking sessions. The light theme breathes with soft gray whites (#F4F6F8 → #FFFFFF). Blue (#2563EB) and green (#10B981) accents work as a confident-but-warm pair: blue for actions and navigation, green for progress and completion.",
+    "keyCharacteristics": [
+      "Warm, approachable feel with rounded corners (16–20px) and soft shadows",
+      "Dark/light themes equally polished — dark mode uses tonal slate ladder, not pure black",
+      "Blue/green accent pair: blue = action, green = progress/completion",
+      "Mobile-first layout with touch-friendly targets (min 48px)",
+      "Progressive disclosure: common actions upfront, complexity on demand",
+      "Small delights (emoji, micro-animations) without sacrificing clarity"
+    ],
+    "rules": [
+      { "name": "The 60/30/10 Rule", "body": "Neutral backgrounds dominate (60%), containers and secondary surfaces provide structure (30%), and accent colors appear with intention (10%). If blue or green covers more than 10% of a screen, pull back.", "section": "colors" },
+      { "name": "The Two-Tone Accent Rule", "body": "In light mode, blue leads and green supports. In dark mode, green leads and blue supports. This swap keeps both themes feeling native rather than simply inverted.", "section": "colors" },
+      { "name": "The One-Family Rule", "body": "Prompt does all the work. No serif pairings, no display gimmicks. Hierarchy is achieved through weight (300/400/600/700) and scale, keeping the visual system unified and the font payload small.", "section": "typography" },
+      { "name": "The Resting Flat Rule", "body": "Item cards, inputs, and stat boxes are flat at rest with only a thin border. Shadows appear only on hover (via hover:shadow-lg) or on floating surfaces (FABs, multiselect bar).", "section": "elevation" },
+      { "name": "The Frosted Glass Rule", "body": "The multi-select controls bar uses backdrop-blur-md with 95% opacity, creating a frosted glass effect that lets content show through while keeping controls readable.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use the blue-to-green gradient for primary actions — it's the signature CTA treatment.",
+      "Do keep surface colors tonal (slate grays, not pure black/white) for both themes.",
+      "Do use hover:scale-[1.01] micro-interactions on list items — they add tactile life.",
+      "Do maintain the 60/30/10 color ratio — neutrals dominate, accents accent.",
+      "Do use Prompt at weights 300/400/600/700 to create hierarchy within one family.",
+      "Do design mobile-first: touch targets ≥48px, readable text at 16px+, vertical stacking on small screens.",
+      "Do use frosting (backdrop-blur + high-opacity overlay) for floating controls like the multiselect bar."
+    ],
+    "donts": [
+      "Don't use generic Bootstrap aesthetics — no default blue buttons with no personality, no cookie-corner rounded-sm everywhere, no stock component feel.",
+      "Don't use cluttered/dense layouts — avoid information-dense tables like old MyAnimeList or spreadsheet-style UIs. Keep it breathable with clear visual hierarchy and adequate padding.",
+      "Don't use more than two accent colors on a single screen (blue + green). Amber is for stars and edit only.",
+      "Don't use shadows on resting item cards — flat at rest, shadows only on hover or floating elements.",
+      "Don't use a second typeface — Prompt handles Thai, Latin, display, and body. Adding another font adds payload without personality gain.",
+      "Don't use pure black (#000000) in dark mode — stick to the Deep Slate (#0F172A) → Slate Item (#334155) ramp for reduced eye strain.",
+      "Don't make modals full-screen on desktop — keep them centered with max-width and air on all sides."
+    ]
+  }
+}
