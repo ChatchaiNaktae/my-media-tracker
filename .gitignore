@@ -23,6 +23,12 @@ npm-debug.log*
 .rovodev/
 .github/skills/
 
+# AI and Tool generated temporary files
+.critique_body.md
+.impeccable/
+*.log
+.DS_Store
+
 # --- Other files ---
 media_tracker.db
 mt.bat
