@@ -191,8 +191,8 @@ export function renderItems(items) {
                             </div>
 
                             <div class="flex flex-col sm:flex-row gap-1.5 shrink-0">
-                                <button class="btn-icon btn-edit text-xs sm:text-sm p-1.5 sm:p-[6px_10px] min-w-[44px] min-h-[44px]" onclick="startEditItem(${item.id})" aria-label="Edit ${escapeHtml(item.title)}"><i class="fa-solid fa-pen" aria-hidden="true"></i></button>
-                                <button class="btn-icon btn-delete text-xs sm:text-sm p-1.5 sm:p-[6px_10px] min-w-[44px] min-h-[44px]" onclick="deleteItem(${item.id})" aria-label="Delete ${escapeHtml(item.title)}"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button>
+                                <button class="btn-icon btn-edit text-xs sm:text-sm p-1.5 sm:p-[6px_10px] min-w-[44px] min-h-[44px] flex items-center gap-1" onclick="startEditItem(${item.id})" aria-label="Edit ${escapeHtml(item.title)}"><i class="fa-solid fa-pen" aria-hidden="true"></i><span class="hidden sm:inline">แก้ไข</span></button>
+                                <button class="btn-icon btn-delete text-xs sm:text-sm p-1.5 sm:p-[6px_10px] min-w-[44px] min-h-[44px] flex items-center gap-1" onclick="deleteItem(${item.id})" aria-label="Delete ${escapeHtml(item.title)}"><i class="fa-solid fa-trash-can" aria-hidden="true"></i><span class="hidden sm:inline">ลบ</span></button>
                             </div>
                         </div>
 

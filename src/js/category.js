@@ -5,6 +5,158 @@ import { escapeHtml } from './utils.js';
 
 const apiUrl = `${API_BASE_URL}/items`;
 
+// ── Shared helper: add or update a category in the <select> + localStorage ──
+function persistCategory(catName, emoji) {
+    const select = document.getElementById('categoryInput');
+
+    let exists = false;
+    for (let i = 0; i < select.options.length; i++) {
+        if (select.options[i].value.toLowerCase() === catName.toLowerCase()) {
+            exists = true;
+            select.selectedIndex = i;
+            break;
+        }
+    }
+
+    if (!exists) {
+        const opt = document.createElement('option');
+        opt.value = catName;
+        opt.text = emoji + " " + catName;
+
+        const addNewOptionIndex = select.options.length - 1;
+        select.insertBefore(opt, select.options[addNewOptionIndex]);
+        select.value = catName;
+    }
+
+    let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
+    savedCustomCats[catName] = emoji;
+    localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
+
+    updateCustomDropdownUI(select);
+    if (select.customDisplaySpan) {
+        select.customDisplaySpan.textContent = select.options[select.selectedIndex].text;
+    }
+}
+
+// ── Add / Edit Category Modal ────────────────────────────────────
+let _modalEditMode = null; // null = add mode, string = old category name in edit mode
+
+export function openAddCategoryModal() {
+    _modalEditMode = null;
+    document.getElementById('addCatModalTitle').innerHTML =
+        '<i class="fa-solid fa-plus" aria-hidden="true"></i> เพิ่มหมวดหมู่ใหม่';
+    document.getElementById('confirmAddCatBtn').textContent = 'เพิ่ม';
+    document.getElementById('newCatName').value = '';
+    document.getElementById('newCatEmoji').value = '';
+    document.getElementById('addCategoryModal').classList.remove('hidden');
+    setTimeout(() => document.getElementById('newCatName').focus(), 100);
+}
+
+function openEditCategoryModal(oldName, oldEmoji) {
+    _modalEditMode = oldName;
+    document.getElementById('addCatModalTitle').innerHTML =
+        '<i class="fa-solid fa-pen" aria-hidden="true"></i> แก้ไขหมวดหมู่';
+    document.getElementById('confirmAddCatBtn').textContent = 'บันทึก';
+    document.getElementById('newCatName').value = oldName;
+    document.getElementById('newCatEmoji').value = oldEmoji;
+    document.getElementById('addCategoryModal').classList.remove('hidden');
+    setTimeout(() => document.getElementById('newCatName').focus(), 100);
+}
+
+export function closeAddCategoryModal() {
+    document.getElementById('addCategoryModal').classList.add('hidden');
+    _modalEditMode = null;
+}
+
+export function confirmAddCategoryModal() {
+    const nameVal = document.getElementById('newCatName').value.trim();
+    const emojiVal = document.getElementById('newCatEmoji').value.trim() || '🏷️';
+
+    if (!nameVal) {
+        showToast('กรุณาใส่ชื่อหมวดหมู่', 'error');
+        document.getElementById('newCatName').focus();
+        return;
+    }
+
+    if (_modalEditMode !== null) {
+        // ── Edit mode ──
+        const oldName = _modalEditMode;
+        const finalName = nameVal;
+        const finalEmoji = emojiVal;
+
+        if (finalName !== oldName || finalEmoji !== savedCustomCats[oldName]) {
+            let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
+            delete savedCustomCats[oldName];
+            savedCustomCats[finalName] = finalEmoji;
+            localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
+
+            // Rename in <select>
+            const select = document.getElementById('categoryInput');
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].value === oldName) {
+                    select.options[i].value = finalName;
+                    select.options[i].text = finalEmoji + ' ' + finalName;
+                    break;
+                }
+            }
+            updateCustomDropdownUI(select);
+            if (select.customDisplaySpan) {
+                select.customDisplaySpan.textContent = select.options[select.selectedIndex].text;
+            }
+
+            // Update items in DB that used the old category name
+            const currentItems = typeof window.getAllItems === 'function' ? window.getAllItems() : [];
+            const itemsToUpdate = currentItems.filter(item => item.category === oldName);
+            if (itemsToUpdate.length > 0) {
+                if (confirm(`พบข้อมูล ${itemsToUpdate.length} รายการที่ใช้หมวดหมู่ "${oldName}"\nต้องการอัปเดตชื่อหมวดหมู่ในข้อมูลเหล่านั้นให้เป็น "${finalName}" ด้วยหรือไม่?`)) {
+                    showToast("กำลังอัปเดตข้อมูล...", 'info');
+                    (async () => {
+                        for (let item of itemsToUpdate) {
+                            item.category = finalName;
+                            await fetch(`${apiUrl}/${item.id}`, {
+                                method: 'PUT',
+                                headers: getAuthHeaders(),
+                                body: JSON.stringify(item)
+                            });
+                        }
+                        showToast("อัปเดตข้อมูลสำเร็จ!", 'success');
+                        if (typeof window.loadItems === 'function') window.loadItems();
+                    })();
+                }
+            }
+            renderManageCategories();
+        }
+    } else {
+        // ── Add mode ──
+        persistCategory(nameVal, emojiVal);
+    }
+
+    closeAddCategoryModal();
+
+    // Reset select if it was set to ADD_NEW placeholder
+    const select = document.getElementById('categoryInput');
+    if (select.value === 'MANAGE_CATEGORIES') {
+        select.selectedIndex = 0;
+    }
+}
+
+// Close modal on Escape key or clicking the backdrop
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('addCategoryModal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeAddCategoryModal();
+        });
+    }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+            closeAddCategoryModal();
+        }
+    });
+});
+
+// ── Category Dropdown ──────────────────────────────────────────
+
 export function refreshCategoryDropdown(items) {
     const select = document.getElementById('categoryInput');
     const uniqueCategories = new Set();
@@ -51,23 +203,34 @@ export function refreshCategoryDropdown(items) {
 }
 
 export function updateCustomDropdownUI(select) {
-    const wrapper = select.parentNode;
-    const list = wrapper.querySelector('.custom-select-list');
-    const spanText = select.customDisplaySpan;
+    // Dropdown lists are portaled to <body> by dropdown.js.
+    // Find the matching portaled list and rebuild it from the select's current options.
+    var list = null;
+    var allLists = document.querySelectorAll('.custom-select-list');
+    for (var i = 0; i < allLists.length; i++) {
+        if (allLists[i].getAttribute('data-select-id') === select.id) {
+            list = allLists[i];
+            break;
+        }
+    }
+    // Fallback: if no data attribute match, use the first list (single-dropdown pages)
+    if (!list && allLists.length > 0) list = allLists[0];
+
+    var spanText = select.customDisplaySpan;
 
     if (!list) return;
 
     list.innerHTML = '';
 
-    Array.from(select.options).forEach((option, index) => {
-        const item = document.createElement("div");
+    Array.from(select.options).forEach(function (option, index) {
+        var item = document.createElement("div");
         item.className = "p-3 cursor-pointer hover:bg-accent hover:text-white dark:hover:bg-accentDark dark:hover:text-gray-900 transition-colors text-[0.95em] select-none";
         item.textContent = option.text;
 
-        item.addEventListener("click", (e) => {
+        item.addEventListener("click", function (e) {
             e.stopPropagation();
             select.selectedIndex = index;
-            spanText.textContent = option.text;
+            if (spanText) spanText.textContent = option.text;
             list.classList.add("hidden");
             select.dispatchEvent(new Event("change"));
         });
@@ -89,45 +252,7 @@ export function handleCategoryChange(selectElement) {
 }
 
 function addNewCategory() {
-    const select = document.getElementById('categoryInput');
-    const newCat = prompt("ตั้งชื่อหมวดหมู่ใหม่ (เช่น Series, Board Game):");
-
-    if (newCat && newCat.trim() !== "") {
-        const catName = newCat.trim();
-        let exists = false;
-
-        for (let i = 0; i < select.options.length; i++) {
-            if (select.options[i].value.toLowerCase() === catName.toLowerCase()) {
-                exists = true;
-                select.selectedIndex = i;
-                break;
-            }
-        }
-
-        if (!exists) {
-            let emoji = prompt(`ใส่อีโมจิสำหรับหมวดหมู่ "${catName}" (เช่น 🤖, 📖, 🎲)\n*ถ้าไม่ใส่ ระบบจะใช้ 🏷️ ให้แทน*`);
-            emoji = (!emoji || emoji.trim() === "") ? "🏷️" : emoji.trim();
-
-            const opt = document.createElement('option');
-            opt.value = catName;
-            opt.text = emoji + " " + catName;
-
-            const addNewOptionIndex = select.options.length - 1;
-            select.insertBefore(opt, select.options[addNewOptionIndex]);
-            select.value = catName;
-
-            let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
-            savedCustomCats[catName] = emoji;
-            localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
-        }
-    } else {
-        select.selectedIndex = 0;
-    }
-
-    updateCustomDropdownUI(select);
-    if (select.customDisplaySpan) {
-        select.customDisplaySpan.textContent = select.options[select.selectedIndex].text;
-    }
+    openAddCategoryModal();
 }
 
 export function openManageCategoryModal() {
@@ -137,7 +262,6 @@ export function openManageCategoryModal() {
 
 export function closeManageCategoryModal() {
     document.getElementById('manageCategoryModal').classList.add('hidden');
-    // อัปเดต Dropdown หลังจากปิดหน้าต่าง
     if (typeof window.getAllItems === 'function') {
         refreshCategoryDropdown(window.getAllItems());
     }
@@ -171,21 +295,21 @@ function renderManageCategories() {
         const btnDiv = document.createElement('div');
         btnDiv.className = 'flex gap-1.5';
 
-        // Edit button — uses addEventListener instead of inline onclick
+        // Edit button — opens the custom modal instead of prompt()
         const editBtn = document.createElement('button');
         editBtn.type = 'button';
-        editBtn.className = 'w-8 h-8 flex items-center justify-center bg-yellow-400 text-gray-900 rounded-lg hover:scale-105 transition-transform shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-1';
+        editBtn.className = 'w-8 h-8 flex items-center justify-center bg-yellow-500 text-white rounded-lg hover:scale-105 transition-transform shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-offset-1';
         editBtn.title = 'แก้ไข';
-        editBtn.setAttribute('aria-label', 'Edit ' + safeCatHtml);
+        editBtn.setAttribute('aria-label', 'แก้ไข ' + safeCatHtml);
         editBtn.innerHTML = '<i class="fa-solid fa-pen text-xs" aria-hidden="true"></i>';
-        editBtn.addEventListener('click', () => editCustomCategory(cat));
+        editBtn.addEventListener('click', () => openEditCategoryModal(cat, savedCustomCats[cat]));
 
-        // Delete button — uses addEventListener instead of inline onclick
+        // Delete button
         const delBtn = document.createElement('button');
         delBtn.type = 'button';
         delBtn.className = 'w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-lg hover:scale-105 transition-transform shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1';
         delBtn.title = 'ลบ';
-        delBtn.setAttribute('aria-label', 'Delete ' + safeCatHtml);
+        delBtn.setAttribute('aria-label', 'ลบ ' + safeCatHtml);
         delBtn.innerHTML = '<i class="fa-solid fa-trash-can text-xs" aria-hidden="true"></i>';
         delBtn.addEventListener('click', () => deleteCustomCategory(cat));
 
@@ -197,43 +321,11 @@ function renderManageCategories() {
     });
 }
 
-export async function editCustomCategory(oldName) {
+export function editCustomCategory(oldName) {
+    // Legacy entry point — now delegates to the modal.
+    // Called by window.editCustomCategory if referenced inline.
     let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
-    let oldEmoji = savedCustomCats[oldName];
-
-    const newName = prompt(`แก้ไขชื่อหมวดหมู่ "${oldName}":`, oldName);
-    if (newName === null) return;
-
-    const finalName = (newName.trim() !== "") ? newName.trim() : oldName;
-    const newEmoji = prompt(`แก้ไขอีโมจิสำหรับ "${finalName}":`, oldEmoji);
-    if (newEmoji === null) return;
-
-    const finalEmoji = (newEmoji.trim() !== "") ? newEmoji.trim() : "🏷️";
-    if (finalName === oldName && finalEmoji === oldEmoji) return;
-
-    delete savedCustomCats[oldName];
-    savedCustomCats[finalName] = finalEmoji;
-    localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
-
-    const currentItems = typeof window.getAllItems === 'function' ? window.getAllItems() : [];
-    const itemsToUpdate = currentItems.filter(item => item.category === oldName);
-
-    if (itemsToUpdate.length > 0) {
-        if (confirm(`พบข้อมูล ${itemsToUpdate.length} รายการที่ใช้หมวดหมู่ "${oldName}"\nต้องการอัปเดตชื่อหมวดหมู่ในข้อมูลเหล่านั้นให้เป็น "${finalName}" ด้วยหรือไม่?`)) {
-            showToast("กำลังอัปเดตข้อมูล...", 'info');
-            for (let item of itemsToUpdate) {
-                item.category = finalName;
-                await fetch(`${apiUrl}/${item.id}`, {
-                    method: 'PUT',
-                    headers: getAuthHeaders(),
-                    body: JSON.stringify(item)
-                });
-            }
-            showToast("อัปเดตข้อมูลสำเร็จ!", 'success');
-            if (typeof window.loadItems === 'function') window.loadItems();
-        }
-    }
-    renderManageCategories();
+    openEditCategoryModal(oldName, savedCustomCats[oldName] || '🏷️');
 }
 
 export function deleteCustomCategory(catName) {
@@ -241,6 +333,19 @@ export function deleteCustomCategory(catName) {
         let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
         delete savedCustomCats[catName];
         localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
+
+        // Remove from <select>
+        const select = document.getElementById('categoryInput');
+        for (let i = 0; i < select.options.length; i++) {
+            if (select.options[i].value === catName) {
+                select.remove(i);
+                break;
+            }
+        }
+        updateCustomDropdownUI(select);
+        if (select.customDisplaySpan) {
+            select.customDisplaySpan.textContent = select.options[select.selectedIndex]?.text || '';
+        }
 
         showToast(`ลบหมวดหมู่ "${escapeHtml(catName)}" เรียบร้อย`, 'success');
         renderManageCategories();

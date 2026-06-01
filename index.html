@@ -14,6 +14,19 @@
     <script src="version.js"></script>
     <link rel="stylesheet" href="output.css">
 
+    <style>
+        #advancedFieldsSection:not(.hidden) {
+            animation: fadeSlideDown 0.2s ease-out;
+        }
+        @keyframes fadeSlideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #toggleAdvancedFields[aria-expanded="true"] .fa-chevron-down {
+            transform: rotate(180deg);
+        }
+    </style>
+
     <script>
         (function () {
             var saved = localStorage.getItem('theme');
@@ -161,57 +174,28 @@
 
                     <input type="hidden" id="editId">
 
+                    <!-- ── Basic Info (always visible) ── -->
+
                     <div class="flex flex-col sm:flex-row gap-3">
-
                         <div class="flex-[2] relative">
-
                             <input type="text" id="titleInput" oninput="clearTitleError(this)"
                                 placeholder="🎬 ชื่อเรื่อง (Title)" class="modal-input pr-[120px]" />
-
-                            <button type="button" id="autofillBtn" onclick="fetchMediaData()" class="absolute right-2 top-1/2 -translate-y-1/2
-
-                            px-3 py-1.5
-                            rounded-xl
-
-                            bg-accent/15
-                            hover:bg-accent/25
-
-                            text-accent dark:text-accentDark
-                            text-sm
-                            font-semibold
-
-                            border border-accent/20
-
-                            transition-colors duration-200
-                            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark min-h-[40px]"
-                            aria-label="Auto-fill from Jikan API">
-
+                            <button type="button" id="autofillBtn" onclick="fetchMediaData()" class="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl bg-accent/15 hover:bg-accent/25 text-accent dark:text-accentDark text-sm font-semibold border border-accent/20 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark min-h-[40px]"
+                                aria-label="Auto-fill from Jikan API">
                                 <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> ดึงข้อมูล
                             </button>
                         </div>
-
-                        <input type="text" id="linkInput" placeholder="🔗 ลิงก์ (URL)" class="modal-input flex-1" />
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-3">
-
                         <div class="flex-1 relative">
-
                             <input type="text" id="coverInput" oninput="previewCoverImage()"
                                 placeholder="🖼️ ลิงก์รูปหน้าปก" class="modal-input pr-[60px]" />
-
-                            <img id="coverPreview" src="" alt="Preview" class="absolute right-2 top-1/2 -translate-y-1/2
-                            w-10 h-10
-                            rounded-lg
-                            object-cover
-                            hidden
-                            border border-gray-300 dark:border-zinc-700">
+                            <img id="coverPreview" src="" alt="Preview" class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-lg object-cover hidden border border-gray-300 dark:border-zinc-700">
                         </div>
-
-                        <input type="text" id="tagsInput" placeholder="🏷️ หมวดหมู่ย่อย" class="modal-input flex-1" />
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <select id="categoryInput" onchange="handleCategoryChange(this)" class="modal-select">
                             <option value="Game">🎮 Game (เกม)</option>
                             <option value="Movie">🎬 Movie (ภาพยนตร์)</option>
@@ -231,81 +215,73 @@
                             <option value="Dropped">❌ Dropped (เท/เลิกดู)</option>
                             <option value="OnHold">⏸️ On Hold (พักไว้ก่อน)</option>
                         </select>
+                    </div>
+
+                    <!-- ── Advanced Details (collapsed by default) ── -->
+
+                    <button type="button" id="toggleAdvancedFields"
+                        class="flex items-center gap-2 text-sm font-semibold text-accent dark:text-accentDark hover:opacity-80 transition-opacity mt-1 mb-0"
+                        aria-expanded="false" aria-controls="advancedFieldsSection">
+                        <i class="fa-solid fa-chevron-down transition-transform duration-200"></i>
+                        รายละเอียดเพิ่มเติม
+                    </button>
+
+                    <div id="advancedFieldsSection" class="hidden space-y-3">
+                        <input type="text" id="linkInput" placeholder="🔗 ลิงก์ (URL)" class="modal-input" />
+
+                        <input type="text" id="tagsInput" placeholder="🏷️ หมวดหมู่ย่อย (แยกด้วยคอมม่า)" class="modal-input" />
 
                         <select id="ratingInput" class="modal-select">
-                            <option value="0">Rating (คะแนน): -</option>
+                            <option value="0">คะแนน: -</option>
                             <option value="5">⭐⭐⭐⭐⭐ (5 - ดีเยี่ยม)</option>
                             <option value="4">⭐⭐⭐⭐ (4 - ดีมาก)</option>
                             <option value="3">⭐⭐⭐ (3 - ปานกลาง)</option>
                             <option value="2">⭐⭐ (2 - พอใช้)</option>
                             <option value="1">⭐ (1 - แย่)</option>
                         </select>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <input type="number" id="currentProgressInput" placeholder="📌 ตอนที่ดูถึง" min="0" class="modal-input" />
+                            <input type="number" id="totalCountInput" placeholder="📚 ตอนทั้งหมด" min="0" class="modal-input" />
+                        </div>
+
+                        <textarea id="reviewInput" placeholder="📝 รีวิว หรือบันทึก..." class="modal-input min-h-[110px] resize-y"></textarea>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-
-                        <input type="number" id="currentProgressInput" placeholder="📌 ตอนที่ดูถึง" min="0"
-                            class="modal-input" />
-
-                        <input type="number" id="totalCountInput" placeholder="📚 ตอนทั้งหมด" min="0"
-                            class="modal-input" />
-                    </div>
-
-                    <textarea id="reviewInput" placeholder="📝 รีวิว หรือบันทึก..."
-                        class="modal-input min-h-[110px] resize-y"></textarea>
+                    <!-- ── Actions (always visible) ── -->
 
                     <div class="flex gap-3 pt-2">
-
-                        <button id="submitBtn" onclick="handleFormSubmit()" class="flex-1 py-3.5 rounded-2xl
-
-                        bg-gradient-to-r
-                        from-accent
-                        to-accentDark
-
-                        text-white
-                        font-bold
-
-                        hover:opacity-90
-
-                        transition-opacity duration-200
-                        min-h-[48px]
-                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-2">
-
+                        <button id="submitBtn" onclick="handleFormSubmit()" class="flex-1 py-3.5 rounded-2xl bg-gradient-to-r from-accent to-accentDark text-white font-bold hover:opacity-90 transition-opacity duration-200 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-2">
                             <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Add to List
                         </button>
-
-                        <button id="cancelBtn" onclick="cancelEdit()" class="hidden px-6 py-3.5 rounded-2xl
-
-                        bg-gray-300 dark:bg-zinc-700
-                        hover:bg-gray-400 dark:hover:bg-zinc-600
-
-                        text-gray-800 dark:text-white
-                        font-semibold
-
-                        transition-colors duration-200
-                        min-h-[48px]
-                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-2">
-
+                        <button id="cancelBtn" onclick="cancelEdit()" class="hidden px-6 py-3.5 rounded-2xl bg-gray-300 dark:bg-zinc-700 hover:bg-gray-400 dark:hover:bg-zinc-600 text-gray-800 dark:text-white font-semibold transition-colors duration-200 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark focus-visible:ring-offset-2">
                             Cancel
                         </button>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div
-        class="fixed bottom-5 right-5 bg-containerLight dark:bg-containerDark p-2.5 rounded-[50px] shadow-[0_4px_15px_rgba(0,0,0,0.2)] flex gap-2.5 z-[1000] border border-gray-200 dark:border-zinc-800">
-        <div class="w-px h-6 bg-gray-300 dark:bg-zinc-700 mx-1 self-center"></div>
-        <button onclick="exportData()"
-            class="px-[15px] py-2 min-h-[44px] bg-[#28a745] text-white border-none rounded-xl text-[0.9em] hover:bg-[#218838] transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#28a745] focus-visible:ring-offset-2"
-            title="เซฟข้อมูลลงเครื่อง" aria-label="Export data"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Export</button>
-        <label
-            class="px-[15px] py-2 min-h-[44px] bg-[#17a2b8] text-white border-none rounded-xl text-[0.9em] hover:bg-[#138496] transition-all shadow-sm cursor-pointer flex items-center focus-within:ring-2 focus-within:ring-[#17a2b8] focus-within:ring-offset-2 rounded-xl"
-            title="โหลดข้อมูลจากเครื่อง">
-            <i class="fa-solid fa-folder-open" aria-hidden="true"></i> Import
-            <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(event)" aria-label="Import data from file">
-        </label>
+            <script>
+                (function () {
+                    var toggle = document.getElementById('toggleAdvancedFields');
+                    var section = document.getElementById('advancedFieldsSection');
+                    var chevron = toggle ? toggle.querySelector('.fa-chevron-down') : null;
+                    if (!toggle || !section) return;
+                    toggle.addEventListener('click', function () {
+                        var isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+                        if (isExpanded) {
+                            section.classList.add('hidden');
+                            toggle.setAttribute('aria-expanded', 'false');
+                            if (chevron) chevron.style.transform = '';
+                        } else {
+                            section.classList.remove('hidden');
+                            toggle.setAttribute('aria-expanded', 'true');
+                            if (chevron) chevron.style.transform = 'rotate(180deg)';
+                        }
+                    });
+                })();
+            </script>
+        </div>
     </div>
 
     <div
@@ -325,8 +301,8 @@
                         id="currentUsernameDisplay">User</span>
                     <div class="w-px h-4 bg-gray-300 dark:bg-zinc-700"></div>
                     <button onclick="handleLogout()"
-                        class="text-sm font-bold text-[#dc3545] hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc3545] focus-visible:ring-offset-1 rounded px-1 min-h-[44px]" title="ออกจากระบบ" aria-label="Logout">
-                        Logout
+                        class="text-sm font-bold text-[#dc3545] hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dc3545] focus-visible:ring-offset-1 rounded px-1 min-h-[44px]" title="ออกจากระบบ" aria-label="ออกจากระบบ">
+                        ออกจากระบบ
                     </button>
                 </div>
                 <button
@@ -356,6 +332,21 @@
             </div>
         </div>
 
+        <!-- ── Data Tools (Export / Import) ── -->
+        <div class="flex gap-2 mb-[25px]">
+            <button onclick="exportData()"
+                class="flex-1 flex items-center justify-center gap-2 px-3 py-2 min-h-[44px] bg-bgLight dark:bg-bgDark border border-gray-200 dark:border-zinc-700 rounded-xl text-[0.85em] font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#28a745] focus-visible:ring-offset-1"
+                title="สำรองข้อมูลลงไฟล์">
+                <i class="fa-solid fa-floppy-disk text-[#28a745]" aria-hidden="true"></i> สำรองข้อมูล
+            </button>
+            <label
+                class="flex-1 flex items-center justify-center gap-2 px-3 py-2 min-h-[44px] bg-bgLight dark:bg-bgDark border border-gray-200 dark:border-zinc-700 rounded-xl text-[0.85em] font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-[#17a2b8] focus-within:ring-offset-1 rounded-xl"
+                title="นำเข้าข้อมูลจากไฟล์">
+                <i class="fa-solid fa-folder-open text-[#17a2b8]" aria-hidden="true"></i> นำเข้าข้อมูล
+                <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(event)" aria-label="นำเข้าข้อมูลจากไฟล์">
+            </label>
+        </div>
+
         <div
             class="mb-[25px] p-[20px] bg-bgLight dark:bg-bgDark rounded-xl border border-gray-200 dark:border-zinc-800 shadow-sm">
             <h3 class="text-center mb-4 text-[0.85em] opacity-70 font-semibold uppercase tracking-wider"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i>
@@ -375,12 +366,12 @@
                     <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                 </div>
                 <input type="text" id="searchInput" placeholder="ค้นหาชื่อเรื่อง หรือตัวย่อ..." onkeyup="handleSearch()"
-                    class="w-full h-full min-h-[48px] pl-[38px] pr-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all m-0 focus-visible:outline-none focus-visible:border-accent dark:focus-visible:border-accentDark focus-visible:ring-[3px] focus-visible:ring-accent/20"
+                    class="w-full h-full min-h-[48px] pl-[38px] pr-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all m-0 focus-visible:outline-none focus-visible:border-accent dark:focus-visible:border-accentDark focus-visible:ring-[3px] focus:ring-accent/20"
                     aria-label="Search media">
             </div>
             <div class="w-full sm:w-[200px] shrink-0">
                 <select id="sortInput" onchange="handleSort()"
-                    class="w-full h-full min-h-[48px] p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all m-0 focus-visible:outline-none focus-visible:border-accent dark:focus-visible:border-accentDark focus-visible:ring-[3px] focus-visible:ring-accent/20"
+                    class="w-full h-full min-h-[48px] p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 focus:outline-none focus:border-accent dark:focus:border-accentDark focus:ring-[3px] focus:ring-accent/20 transition-all m-0 focus-visible:outline-none focus-visible:border-accent dark:focus-visible:border-accentDark focus:ring-[3px] focus:ring-accent/20"
                     aria-label="Sort items">
                     <option value="newest">🆕 ใหม่สุดไปเก่าสุด</option>
                     <option value="oldest">⏳ เก่าสุดไปใหม่สุด</option>
@@ -464,6 +455,33 @@
         </div>
     </div>
     <div id="toastContainer" class="fixed top-5 right-5 z-[99999] flex flex-col gap-3 pointer-events-none" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <div id="addCategoryModal" class="fixed inset-0 z-[6000] hidden flex items-center justify-center p-4 sm:p-6 bg-black/80 transition-opacity duration-200">
+        <div class="w-full max-w-[400px] bg-containerLight dark:bg-zinc-900 rounded-3xl p-5 sm:p-7 shadow-2xl relative animate-[modalPop_.18s_ease] border border-gray-200 dark:border-zinc-800">
+            <h3 class="text-xl font-bold mb-4 text-gray-800 dark:text-white flex items-center gap-2" id="addCatModalTitle">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i> เพิ่มหมวดหมู่ใหม่
+            </h3>
+            <div class="space-y-4 mb-5">
+                <div>
+                    <label for="newCatName" class="block text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">ชื่อหมวดหมู่</label>
+                    <input type="text" id="newCatName" placeholder="เช่น Series, Board Game" class="w-full p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
+                </div>
+                <div>
+                    <label for="newCatEmoji" class="block text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">อีโมจิ (ไม่บังคับ)</label>
+                    <input type="text" id="newCatEmoji" placeholder="🤖 📖 🎲" class="w-full p-3 border border-gray-300 dark:border-zinc-700 rounded-xl bg-bgLight dark:bg-bgDark text-gray-800 dark:text-gray-200 focus:border-accent focus:ring-2 focus:ring-accent/20 outline-none transition-all">
+                    <p class="text-xs opacity-50 mt-1">ถ้าไม่ใส่ ระบบจะใช้ 🏷️ ให้</p>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="closeAddCategoryModal()" class="flex-1 py-3 rounded-xl bg-gray-200 dark:bg-zinc-800 hover:bg-gray-300 dark:hover:bg-zinc-700 text-gray-800 dark:text-white font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark min-h-[48px]">
+                    ยกเลิก
+                </button>
+                <button id="confirmAddCatBtn" onclick="confirmAddCategoryModal()" class="flex-1 py-3 rounded-xl bg-accent dark:bg-accentDark text-white font-semibold hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:focus-visible:ring-accentDark min-h-[48px]">
+                    เพิ่ม
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

@@ -2,7 +2,7 @@ import { openItemModal, closeItemModal, showToast, scrollToTop, showSkeleton } f
 import { handleLogin, handleLogout, handleRegister, toggleAuthView, togglePassword, checkAuth, getAuthHeaders } from './auth.js';
 import { updateDashboard, updateCharts, getMediaChart } from './dashboard.js';
 import { saveAction, updateUndoRedoUI, triggerUndo, triggerRedo } from './history.js';
-import { handleCategoryChange, closeManageCategoryModal, editCustomCategory, deleteCustomCategory, refreshCategoryDropdown } from './category.js';
+import { handleCategoryChange, closeManageCategoryModal, editCustomCategory, deleteCustomCategory, refreshCategoryDropdown, openAddCategoryModal, closeAddCategoryModal, confirmAddCategoryModal } from './category.js';
 import { exportData, importData, fetchMediaData } from './data.js';
 import { clearSelectedItems, updateMultiSelectUI, handleCheckboxChange, toggleSelectAll, deleteSelectedItems } from './multiselect.js';
 import { quickProgress, handleFormSubmit, startEditItem, cancelEdit, deleteItem } from './form.js';
@@ -47,6 +47,9 @@ window.closeManageCategoryModal = closeManageCategoryModal;
 window.editCustomCategory = editCustomCategory;
 window.deleteCustomCategory = deleteCustomCategory;
 window.refreshCategoryDropdown = refreshCategoryDropdown;
+window.openAddCategoryModal = openAddCategoryModal;
+window.closeAddCategoryModal = closeAddCategoryModal;
+window.confirmAddCategoryModal = confirmAddCategoryModal;
 
 // Import Data & Export Data
 window.exportData = exportData;

@@ -3,11 +3,14 @@ import { escapeHtml } from './utils.js';
 export function openItemModal() {
     const modal = document.getElementById('itemModal');
     if (modal) modal.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
 }
 
 export function closeItemModal() {
     const modal = document.getElementById('itemModal');
     if (modal) modal.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+    if (typeof window.cancelEdit === 'function') window.cancelEdit();
 }
 
 // Skeleton Loading System
@@ -51,26 +54,26 @@ export function showToast(message, type = 'success') {
     const toast = document.createElement('div');
     const config = {
         success: {
-            bg: 'border-l-[#28a745]',
-            icon: '<i class="fa-solid fa-check" aria-hidden="true"></i>',
+            iconBg: 'bg-[#28a745]/10',
+            icon: '<i class="fa-solid fa-check text-[#28a745]" aria-hidden="true"></i>',
             title: 'Success',
             textColor: 'text-[#28a745]'
         },
         error: {
-            bg: 'border-l-[#dc3545]',
-            icon: '<i class="fa-solid fa-xmark" aria-hidden="true"></i>',
+            iconBg: 'bg-[#dc3545]/10',
+            icon: '<i class="fa-solid fa-xmark text-[#dc3545]" aria-hidden="true"></i>',
             title: 'Error',
             textColor: 'text-[#dc3545]'
         },
         warning: {
-            bg: 'border-l-[#f0ad4e]',
-            icon: '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>',
+            iconBg: 'bg-[#f0ad4e]/10',
+            icon: '<i class="fa-solid fa-triangle-exclamation text-[#f0ad4e]" aria-hidden="true"></i>',
             title: 'Warning',
             textColor: 'text-[#f0ad4e]'
         },
         info: {
-            bg: 'border-l-[#17a2b8]',
-            icon: '<i class="fa-solid fa-circle-info" aria-hidden="true"></i>',
+            iconBg: 'bg-[#17a2b8]/10',
+            icon: '<i class="fa-solid fa-circle-info text-[#17a2b8]" aria-hidden="true"></i>',
             title: 'Info',
             textColor: 'text-[#17a2b8]'
         }
@@ -81,10 +84,10 @@ export function showToast(message, type = 'success') {
         toast-in
         pointer-events-auto
         bg-containerLight dark:bg-containerDark
-        border-l-4 ${current.bg}
-        p-4 rounded-xl
+        rounded-xl
         shadow-2xl
         flex items-center gap-3
+        p-4
         min-w-[280px]
         max-w-[350px]
         border border-gray-200 dark:border-zinc-800
@@ -92,7 +95,9 @@ export function showToast(message, type = 'success') {
     `;
 
     toast.innerHTML = `
-        <div class="text-xl shrink-0">${current.icon}</div>
+        <div class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${current.iconBg}">
+            ${current.icon}
+        </div>
 
         <div class="flex-1 min-w-0">
             <div class="font-bold text-[0.9em] ${current.textColor}">

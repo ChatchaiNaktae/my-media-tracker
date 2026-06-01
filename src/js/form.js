@@ -24,30 +24,81 @@ export async function quickProgress(id, current, total) {
     if (typeof window.loadItems === 'function') window.loadItems();
 }
 
-export async function handleFormSubmit() {
-    const titleInput = document.getElementById('titleInput');
-    const title = titleInput.value.trim();
+function clearFieldErrors() {
+    document.querySelectorAll('.input-error').forEach(function (el) {
+        el.classList.remove('input-error');
+    });
+    document.querySelectorAll('.field-error-msg').forEach(function (el) {
+        el.remove();
+    });
+}
 
-    if(!title) {
-        titleInput.classList.add('input-error', 'animate-shake'); 
+function showFieldError(inputEl, message) {
+    inputEl.classList.add('input-error');
+    var msg = document.createElement('p');
+    msg.className = 'field-error-msg text-xs text-red-500 dark:text-red-400 mt-1';
+    msg.textContent = message;
+    inputEl.parentNode.appendChild(msg);
+}
+
+export async function handleFormSubmit() {
+    var titleInput = document.getElementById('titleInput');
+    var title = titleInput.value.trim();
+
+    clearFieldErrors();
+
+    var firstError = false;
+
+    if (!title) {
+        titleInput.classList.add('input-error', 'animate-shake');
         titleInput.placeholder = "กรุณาใส่ชื่อเรื่องก่อนบันทึก!";
-        setTimeout(() => titleInput.classList.remove('animate-shake'), 400);
-        return;
+        setTimeout(function () { titleInput.classList.remove('animate-shake'); }, 400);
+        if (!firstError) { titleInput.focus(); firstError = true; }
     }
 
-    const currentItems = typeof window.getAllItems === 'function' ? window.getAllItems() : [];
-    const isDuplicate = currentItems.some(item =>
-        item.title.toLowerCase() === title.toLowerCase() &&
-        (!isEditing || item.id !== parseInt(document.getElementById('editId').value))
-    );
+    var linkVal = document.getElementById('linkInput').value.trim();
+    if (linkVal && !/^https?:\/\//i.test(linkVal)) {
+        showFieldError(document.getElementById('linkInput'), 'ลิงก์ต้องขึ้นต้นด้วย http:// หรือ https://');
+        if (!firstError) { document.getElementById('linkInput').focus(); firstError = true; }
+    }
+
+    var coverVal = document.getElementById('coverInput').value.trim();
+    if (coverVal && !/^https?:\/\//i.test(coverVal)) {
+        showFieldError(document.getElementById('coverInput'), 'ลิงก์รูปภาพต้องขึ้นต้นด้วย http:// หรือ https://');
+        if (!firstError) { document.getElementById('coverInput').focus(); firstError = true; }
+    }
+
+    var currentProgress = parseInt(document.getElementById('currentProgressInput').value, 10);
+    var totalCount = parseInt(document.getElementById('totalCountInput').value, 10);
+    if (document.getElementById('currentProgressInput').value !== '' && (isNaN(currentProgress) || currentProgress < 0)) {
+        showFieldError(document.getElementById('currentProgressInput'), 'ต้องเป็นตัวเลข 0 ขึ้นไป');
+        if (!firstError) { document.getElementById('currentProgressInput').focus(); firstError = true; }
+    }
+    if (document.getElementById('totalCountInput').value !== '' && (isNaN(totalCount) || totalCount < 0)) {
+        showFieldError(document.getElementById('totalCountInput'), 'ต้องเป็นตัวเลข 0 ขึ้นไป');
+        if (!firstError) { document.getElementById('totalCountInput').focus(); firstError = true; }
+    }
+    if (!firstError && !isNaN(currentProgress) && !isNaN(totalCount) && totalCount > 0 && currentProgress > totalCount) {
+        showFieldError(document.getElementById('currentProgressInput'), 'ตอนที่ดูถึงต้องไม่เกินตอนทั้งหมด');
+        document.getElementById('currentProgressInput').focus();
+        firstError = true;
+    }
+
+    if (firstError) return;
+
+    var currentItems = typeof window.getAllItems === 'function' ? window.getAllItems() : [];
+    var isDuplicate = currentItems.some(function (item) {
+        return item.title.toLowerCase() === title.toLowerCase() &&
+            (!isEditing || item.id !== parseInt(document.getElementById('editId').value, 10));
+    });
 
     if (isDuplicate) {
-        showToast(`ชื่อเรื่อง "${title}" มีอยู่ในลิสต์เรียบร้อยแล้วครับ!`, 'warning');
+        showToast('ชื่อเรื่อง "' + title + '" มีอยู่ในลิสต์เรียบร้อยแล้วครับ!', 'warning');
         titleInput.focus();
         return;
     }
-    
-    const data = {
+
+    var data = {
         title,
         category: document.getElementById('categoryInput').value,
         status: document.getElementById('statusInput').value,
@@ -113,6 +164,14 @@ export function cancelEdit() {
     if (typeof window.previewCoverImage === 'function') window.previewCoverImage();
     document.getElementById('submitBtn').textContent = "Add to List (เพิ่มรายการ)";
     document.getElementById('cancelBtn').classList.add('hidden');
+
+    // Collapse advanced fields section
+    var advancedSection = document.getElementById('advancedFieldsSection');
+    var toggleBtn = document.getElementById('toggleAdvancedFields');
+    var chevron = toggleBtn ? toggleBtn.querySelector('.fa-chevron-down') : null;
+    if (advancedSection) advancedSection.classList.add('hidden');
+    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
+    if (chevron) chevron.style.transform = '';
 }
 
 export async function deleteItem(id) {
