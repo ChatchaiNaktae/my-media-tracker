@@ -108,21 +108,21 @@ export function confirmAddCategoryModal() {
             const currentItems = typeof window.getAllItems === 'function' ? window.getAllItems() : [];
             const itemsToUpdate = currentItems.filter(item => item.category === oldName);
             if (itemsToUpdate.length > 0) {
-                if (confirm(`พบข้อมูล ${itemsToUpdate.length} รายการที่ใช้หมวดหมู่ "${oldName}"\nต้องการอัปเดตชื่อหมวดหมู่ในข้อมูลเหล่านั้นให้เป็น "${finalName}" ด้วยหรือไม่?`)) {
+                window.showConfirmDialog('อัปเดตหมวดหมู่', 'พบข้อมูล ' + itemsToUpdate.length + ' รายการที่ใช้หมวดหมู่ "' + oldName + '"\nต้องการอัปเดตชื่อหมวดหมู่ในข้อมูลเหล่านั้นให้เป็น "' + finalName + '" ด้วยหรือไม่?', function () {
                     showToast("กำลังอัปเดตข้อมูล...", 'info');
-                    (async () => {
-                        for (let item of itemsToUpdate) {
-                            item.category = finalName;
-                            await fetch(`${apiUrl}/${item.id}`, {
+                    (async function () {
+                        for (var i = 0; i < itemsToUpdate.length; i++) {
+                            itemsToUpdate[i].category = finalName;
+                            await fetch(`${apiUrl}/${itemsToUpdate[i].id}`, {
                                 method: 'PUT',
                                 headers: getAuthHeaders(),
-                                body: JSON.stringify(item)
+                                body: JSON.stringify(itemsToUpdate[i])
                             });
                         }
                         showToast("อัปเดตข้อมูลสำเร็จ!", 'success');
                         if (typeof window.loadItems === 'function') window.loadItems();
                     })();
-                }
+                });
             }
             renderManageCategories();
         }
@@ -329,8 +329,8 @@ export function editCustomCategory(oldName) {
 }
 
 export function deleteCustomCategory(catName) {
-    if (confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบหมวดหมู่ "${catName}"?\n\n(หมวดหมู่นี้จะหายไปจากตัวเลือก แต่ข้อมูลเรื่องเก่าๆ ที่เคยใช้หมวดหมู่นี้จะยังคงอยู่)`)) {
-        let savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
+    window.showConfirmDialog('ลบหมวดหมู่', 'คุณแน่ใจหรือไม่ว่าต้องการลบหมวดหมู่ "' + catName + '"?\n\n(หมวดหมู่นี้จะหายไปจากตัวเลือก แต่ข้อมูลเรื่องเก่าๆ ที่เคยใช้หมวดหมู่นี้จะยังคงอยู่)', function () {
+        var savedCustomCats = JSON.parse(localStorage.getItem('customCategories') || '{}');
         delete savedCustomCats[catName];
         localStorage.setItem('customCategories', JSON.stringify(savedCustomCats));
 
@@ -349,5 +349,5 @@ export function deleteCustomCategory(catName) {
 
         showToast(`ลบหมวดหมู่ "${escapeHtml(catName)}" เรียบร้อย`, 'success');
         renderManageCategories();
-    }
+    });
 }

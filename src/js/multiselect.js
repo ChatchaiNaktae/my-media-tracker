@@ -56,9 +56,9 @@ export function toggleSelectAll(checkbox) {
 
 export async function deleteSelectedItems() {
     if (selectedItems.size === 0) return;
-    if (confirm(`คุณต้องการลบ ${selectedItems.size} รายการที่เลือกใช่หรือไม่?\n(สามารถกู้คืนได้ด้วย Undo)`)) {
+    window.showConfirmDialog('ลบรายการที่เลือก', 'คุณต้องการลบ ' + selectedItems.size + ' รายการที่เลือกใช่หรือไม่?\n(สามารถกู้คืนได้ด้วย Undo)', async function () {
         const currentItems = typeof window.getAllItems === 'function' ? window.getAllItems() : [];
-        const deletedItems = currentItems.filter(x => selectedItems.has(x.id)); 
+        const deletedItems = currentItems.filter(x => selectedItems.has(x.id));
 
         const btn = document.getElementById('deleteSelectedBtn');
         const originalText = btn.innerHTML;
@@ -71,12 +71,12 @@ export async function deleteSelectedItems() {
                 headers: getAuthHeaders(),
                 body: JSON.stringify({ ids: Array.from(selectedItems) })
             });
-            
-            saveAction({ type: 'batch_delete', items: deletedItems }); 
+
+            saveAction({ type: 'batch_delete', items: deletedItems });
             selectedItems.clear();
             updateMultiSelectUI();
             showToast("ลบรายการที่เลือกสำเร็จ!", 'success');
-            
+
             if (typeof window.loadItems === 'function') window.loadItems();
         } catch (error) {
             console.error("Batch Delete Error:", error);
@@ -85,5 +85,5 @@ export async function deleteSelectedItems() {
             btn.innerHTML = originalText;
             btn.disabled = false;
         }
-    }
+    });
 }

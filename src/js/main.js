@@ -7,8 +7,10 @@ import { exportData, importData, fetchMediaData } from './data.js';
 import { clearSelectedItems, updateMultiSelectUI, handleCheckboxChange, toggleSelectAll, deleteSelectedItems } from './multiselect.js';
 import { quickProgress, handleFormSubmit, startEditItem, cancelEdit, deleteItem } from './form.js';
 import { getAllItems, loadItems, renderItems, loadMoreItems, setFilter, handleSearch, handleSort, updateTagFilters, setTagFilter } from './list.js';
+import { showConfirmDialog } from './confirm-dialog.js';
 
 window.getAllItems = getAllItems;
+window.showConfirmDialog = showConfirmDialog;
 
 // Theme
 import { toggleTheme, initTheme } from './theme.js';

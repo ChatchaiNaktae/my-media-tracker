@@ -175,12 +175,12 @@ export function cancelEdit() {
 }
 
 export async function deleteItem(id) {
-    if(confirm("ลบรายการนี้ใช่ไหม? (สามารถกู้คืนได้ด้วย Undo)")) { 
+    window.showConfirmDialog('ลบรายการ', 'ลบรายการนี้ใช่ไหม?\n(สามารถกู้คืนได้ด้วย Undo)', async function () {
         const currentItems = typeof window.getAllItems === 'function' ? window.getAllItems() : [];
         const deletedItem = currentItems.find(x => x.id === id);
-        
+
         await fetch(`${apiUrl}/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
         saveAction({ type: 'delete', item: deletedItem });
-        if (typeof window.loadItems === 'function') window.loadItems(); 
-    }
+        if (typeof window.loadItems === 'function') window.loadItems();
+    });
 }

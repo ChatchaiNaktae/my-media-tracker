@@ -29,11 +29,11 @@ export async function handleLogin() {
 }
 
 export function handleLogout() {
-    if (confirm("ต้องการออกจากระบบใช่หรือไม่?")) {
+    window.showConfirmDialog('ออกจากระบบ', 'ต้องการออกจากระบบใช่หรือไม่?', function () {
         localStorage.removeItem('access_token');
         localStorage.removeItem('current_username');
         location.reload();
-    }
+    });
 }
 
 export function togglePassword(inputId, btn) {

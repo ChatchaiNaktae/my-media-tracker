@@ -43,14 +43,16 @@ export async function importData(event) {
                 throw new Error("รูปแบบไฟล์ไม่ถูกต้อง");
             }
 
-            if (confirm(`พบข้อมูล ${importedItems.length} รายการ ต้องการนำเข้าหรือไม่?\n(ข้อมูลที่มี ID ซ้ำจะถูกอัปเดต ส่วนข้อมูลใหม่จะถูกเพิ่มเข้าไป)`)) {
+            var importedCount = importedItems.length;
+            var label = event.target.parentElement;
+            var originalText = label.innerHTML;
 
-                const label = event.target.parentElement;
-                const originalText = label.innerHTML;
+            window.showConfirmDialog('นำเข้าข้อมูล', 'พบข้อมูล ' + importedCount + ' รายการ ต้องการนำเข้าหรือไม่?\n(ข้อมูลที่มี ID ซ้ำจะถูกอัปเดต ส่วนข้อมูลใหม่จะถูกเพิ่มเข้าไป)', async function () {
+
                 label.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Loading...';
                 label.style.pointerEvents = "none";
 
-                const currentItems = typeof window.getAllItems === 'function' ? window.getAllItems() : [];
+                var currentItems = typeof window.getAllItems === 'function' ? window.getAllItems() : [];
 
                 for (const item of importedItems) {
                     const exists = currentItems.find(x => x.id === item.id);
@@ -74,8 +76,8 @@ export async function importData(event) {
                 label.style.pointerEvents = "auto";
 
                 showToast("นำเข้าข้อมูลเสร็จสิ้น!", 'success');
-                if (typeof window.loadItems === 'function') window.loadItems(); 
-            }
+                if (typeof window.loadItems === 'function') window.loadItems();
+            });
         } catch (error) {
             showToast("ไฟล์ไม่ถูกต้อง หรือเกิดข้อผิดพลาดในการอ่านข้อมูล", 'error');
             console.error("Import Error:", error);
