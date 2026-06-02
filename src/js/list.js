@@ -194,7 +194,7 @@ export function renderItems(items) {
                     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
                         <div class="flex justify-between items-start gap-2 w-full min-w-0">
                             <div class="flex-1 min-w-0 overflow-hidden">
-                                <div class="font-semibold text-[1rem] sm:text-[1.1em] leading-tight break-words whitespace-normal">
+                                <div id="item-title-${item.id}" class="font-semibold text-[1rem] sm:text-[1.1em] leading-tight break-words whitespace-normal">
                                     ${escapeHtml(item.title)}
                                     <span class="text-yellow-400 text-xs sm:text-sm whitespace-nowrap inline-block ml-1" aria-label="${item.rating} star${item.rating !== 1 ? 's' : ''}">${Array(item.rating).fill('<i class="fa-solid fa-star" aria-hidden="true"></i>').join('')}</span>
                                     ${linkHtml}
@@ -203,8 +203,8 @@ export function renderItems(items) {
                             </div>
 
                             <div class="flex flex-col sm:flex-row gap-1.5 shrink-0">
-                                <button class="btn-icon btn-edit text-xs sm:text-sm p-1.5 sm:p-[6px_10px] min-w-[44px] min-h-[44px] flex items-center gap-1" onclick="startEditItem(${item.id})" aria-label="Edit ${escapeHtml(item.title)}"><i class="fa-solid fa-pen" aria-hidden="true"></i><span class="hidden sm:inline">แก้ไข</span></button>
-                                <button class="btn-icon btn-delete text-xs sm:text-sm p-1.5 sm:p-[6px_10px] min-w-[44px] min-h-[44px] flex items-center gap-1" onclick="deleteItem(${item.id})" aria-label="Delete ${escapeHtml(item.title)}"><i class="fa-solid fa-trash-can" aria-hidden="true"></i><span class="hidden sm:inline">ลบ</span></button>
+                                <button class="btn-icon btn-edit text-xs sm:text-sm p-1.5 sm:p-[6px_10px] min-w-[44px] min-h-[44px] flex items-center gap-1" onclick="startEditItem(${item.id})" aria-label="แก้ไข ${escapeHtml(item.title)}" aria-describedby="item-title-${item.id}"><i class="fa-solid fa-pen" aria-hidden="true"></i><span class="hidden sm:inline">แก้ไข</span></button>
+                                <button class="btn-icon btn-delete text-xs sm:text-sm p-1.5 sm:p-[6px_10px] min-w-[44px] min-h-[44px] flex items-center gap-1" onclick="deleteItem(${item.id})" aria-label="ลบ ${escapeHtml(item.title)}" aria-describedby="item-title-${item.id}"><i class="fa-solid fa-trash-can" aria-hidden="true"></i><span class="hidden sm:inline">ลบ</span></button>
                             </div>
                         </div>
 

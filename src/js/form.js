@@ -27,6 +27,8 @@ export async function quickProgress(id, current, total) {
 function clearFieldErrors() {
     document.querySelectorAll('.input-error').forEach(function (el) {
         el.classList.remove('input-error');
+        el.removeAttribute('aria-invalid');
+        el.removeAttribute('aria-describedby');
     });
     document.querySelectorAll('.field-error-msg').forEach(function (el) {
         el.remove();
@@ -35,10 +37,14 @@ function clearFieldErrors() {
 
 function showFieldError(inputEl, message) {
     inputEl.classList.add('input-error');
+    inputEl.setAttribute('aria-invalid', 'true');
+    var msgId = inputEl.id + '-error';
     var msg = document.createElement('p');
+    msg.id = msgId;
     msg.className = 'field-error-msg text-xs text-red-500 dark:text-red-400 mt-1';
     msg.textContent = message;
     inputEl.parentNode.appendChild(msg);
+    inputEl.setAttribute('aria-describedby', msgId);
 }
 
 export async function handleFormSubmit() {

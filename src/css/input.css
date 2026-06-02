@@ -127,9 +127,8 @@
     }
 
     .item-review {
-        @apply block mt-[10px] p-[10px_15px] rounded-xl text-[0.92em] italic opacity-90 break-words leading-relaxed bg-black/5 dark:bg-white/10;
-
-        border-left: 4px solid var(--color-accent);
+        @apply block mt-[10px] p-[10px_15px] rounded-xl text-[0.92em] italic opacity-90 break-words leading-relaxed;
+        background: color-mix(in oklab, var(--color-accent) 8%, transparent);
     }
 
     .actions {
@@ -141,7 +140,7 @@
     }
 
     .btn-edit {
-        @apply bg-yellow-400 text-gray-900;
+        @apply bg-yellow-500 text-white;
     }
 
     .btn-delete {
@@ -198,7 +197,7 @@
 
     /* Toast */
     .toast-in {
-        animation: slideInRight 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        animation: slideInRight 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
     .toast-out {
@@ -227,6 +226,15 @@
             opacity: 0;
             transform: scale(0.9);
         }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .toast-in,
+    .toast-out {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }
 
