@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_talisman import Talisman
@@ -13,27 +13,7 @@ from extensions import limiter
 # ── Setup Flask ─────────────────────────────────────────────
 app = Flask(__name__, static_folder='../', static_url_path='')
 
-# ── CORS — origins from env var ─────────────────────────────
-_allowed = os.getenv(
-    "ALLOWED_ORIGINS",
-    "https://chatchainaktae.github.io,"
-    "http://127.0.0.1:8080,http://localhost:8080,"
-    "http://127.0.0.1:5500,http://localhost:5500"
-)
-ALLOWED_ORIGINS = [o.strip() for o in _allowed.split(",") if o.strip()]
-
-# In production, restrict to production origins only
-if os.getenv("FLASK_ENV") == "production":
-    prod_origins = os.getenv("ALLOWED_PROD_ORIGINS", "https://chatchainaktae.github.io")
-    ALLOWED_ORIGINS = [o.strip() for o in prod_origins.split(",") if o.strip()]
-
-CORS(app, resources={r"/api/*": {
-    "origins": ALLOWED_ORIGINS,
-    "methods": ["GET", "POST", "PUT", "DELETE"],
-    "allow_headers": ["Content-Type", "Authorization"]
-}})
-
-# ── Security Headers (Flask-Talisman) ────────────────────────
+# ── Security Headers (Flask-Talisman) — innermost layer ──────
 Talisman(
     app,
     force_https=os.getenv("FLASK_ENV") == "production",
@@ -69,6 +49,29 @@ Talisman(
     frame_options="SAMEORIGIN",
 )
 
+# ── CORS — outermost layer so preflight headers always win ──
+_allowed = os.getenv(
+    "ALLOWED_ORIGINS",
+    "https://chatchainaktae.github.io,"
+    "http://127.0.0.1:8080,http://localhost:8080,"
+    "http://127.0.0.1:5500,http://localhost:5500"
+)
+ALLOWED_ORIGINS = [o.strip() for o in _allowed.split(",") if o.strip()]
+
+if os.getenv("FLASK_ENV") == "production":
+    prod_origins = os.getenv("ALLOWED_PROD_ORIGINS", "https://chatchainaktae.github.io")
+    ALLOWED_ORIGINS = [o.strip() for o in prod_origins.split(",") if o.strip()]
+
+CORS(app, resources={r"/api/*": {
+    "origins": ALLOWED_ORIGINS,
+    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "allow_headers": ["Content-Type", "Authorization", "Accept"],
+    "expose_headers": ["Authorization"],
+    "supports_credentials": True,
+    "intercept_exceptions": True,
+    "max_age": 86400,
+}})
+
 # ── Rate Limiting (Flask-Limiter) ────────────────────────────
 limiter.init_app(app)
 
@@ -85,6 +88,14 @@ init_db()
 
 # ── Register Routes ─────────────────────────────────────────
 app.register_blueprint(api, url_prefix='/api')
+
+
+@app.after_request
+def handle_options(response):
+    """Ensure preflight OPTIONS requests always return 200 with CORS headers."""
+    if request.method == "OPTIONS" and response.status_code not in (200, 204):
+        response.status_code = 200
+    return response
 
 
 @app.route('/')
