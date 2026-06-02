@@ -14,13 +14,25 @@ const itemsPerPage = 15;
 // Export state for other modules to use
 export function getAllItems() { return allItems; }
 
-// Timestamp formatter: DD/MM/YYYY HH:MM:SS
+// Timestamp formatter: DD/MM/YYYY HH:mm:ss in user's local timezone, 24-hour format.
+// Server sends naive UTC datetimes (no timezone suffix), so we force UTC parsing.
 export function formatTimestamp(isoString) {
     if (!isoString) return 'Unknown';
-    const d = new Date(isoString);
+    var utcString = isoString;
+    // If no timezone info present (naive datetime from server), treat as UTC
+    if (utcString && !utcString.match(/[Zz]|[+-]\d{2}:\d{2}$/)) {
+        utcString = utcString.replace(' ', 'T') + 'Z';
+    }
+    var d = new Date(utcString);
     if (isNaN(d.getTime())) return 'Unknown';
-    const pad = n => String(n).padStart(2, '0');
-    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    // getHours/Minutes/Seconds return local timezone values from the UTC Date
+    var day = String(d.getDate()).padStart(2, '0');
+    var month = String(d.getMonth() + 1).padStart(2, '0');
+    var year = d.getFullYear();
+    var hours = String(d.getHours()).padStart(2, '0');
+    var minutes = String(d.getMinutes()).padStart(2, '0');
+    var seconds = String(d.getSeconds()).padStart(2, '0');
+    return day + '/' + month + '/' + year + ' ' + hours + ':' + minutes + ':' + seconds;
 }
 
 // Smart Search Acronym
