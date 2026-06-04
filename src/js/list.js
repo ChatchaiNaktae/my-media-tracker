@@ -1,4 +1,4 @@
-import { getAuthHeaders } from './auth.js';
+import { getAuthHeaders, apiFetch } from './auth.js';
 import { showSkeleton } from './ui.js';
 import { API_BASE_URL } from './config.js';
 import { escapeHtml, sanitizeUrl } from './utils.js';
@@ -50,14 +50,7 @@ export async function loadItems() {
     showSkeleton();
 
     try {
-        const response = await fetch(apiUrl, { headers: getAuthHeaders() });
-        if (response.status === 401 || response.status === 422) {
-            console.warn("Token expired, invalid, or unauthorized. Forcing logout.");
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('current_username');
-            location.reload();
-            return;
-        }
+        const response = await apiFetch(apiUrl);
 
         if (!response.ok) {
             throw new Error(`Server returned ${response.status}`);

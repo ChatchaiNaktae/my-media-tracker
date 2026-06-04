@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from datetime import datetime
 import time
 from database import collection, users_coll
@@ -30,8 +30,16 @@ def login():
 
     if user and bcrypt.check_password_hash(user['password'], data['password']):
         access_token = create_access_token(identity=data['username'])
-        return jsonify(access_token=access_token), 200
+        refresh_token = create_refresh_token(identity=data['username'])
+        return jsonify(access_token=access_token, refresh_token=refresh_token), 200
     return jsonify({"message": "Invalid username or password"}), 401
+
+@api.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh():
+    current_user = get_jwt_identity()
+    new_access_token = create_access_token(identity=current_user)
+    return jsonify(access_token=new_access_token), 200
 
 @api.route('/items', methods=['GET'])
 @jwt_required()

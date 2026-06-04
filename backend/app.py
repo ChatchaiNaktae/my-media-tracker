@@ -77,7 +77,8 @@ limiter.init_app(app)
 
 # ── JWT Configuration ───────────────────────────────────────
 app.config["JWT_SECRET_KEY"] = Config.JWT_SECRET_KEY
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=15)
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = False
 
 # ── Initialize Extensions ───────────────────────────────────
 jwt = JWTManager(app)

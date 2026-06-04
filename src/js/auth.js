@@ -21,6 +21,7 @@ export async function handleLogin() {
     if (response.ok) {
         const data = await response.json();
         localStorage.setItem('access_token', data.access_token);
+        localStorage.setItem('refresh_token', data.refresh_token);
         localStorage.setItem('current_username', username); 
         location.reload();
     } else {
@@ -31,9 +32,77 @@ export async function handleLogin() {
 export function handleLogout() {
     window.showConfirmDialog('ออกจากระบบ', 'ต้องการออกจากระบบใช่หรือไม่?', function () {
         localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
         localStorage.removeItem('current_username');
         location.reload();
     });
+}
+
+export function forceLogout() {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('current_username');
+    location.reload();
+}
+
+export async function refreshAccessToken() {
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (!refreshToken) {
+        forceLogout();
+        return false;
+    }
+
+    try {
+        const response = await fetch(`${apiUrl}/refresh`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${refreshToken}`
+            }
+        });
+
+        if (!response.ok) {
+            forceLogout();
+            return false;
+        }
+
+        const data = await response.json();
+        localStorage.setItem('access_token', data.access_token);
+        return true;
+    } catch (error) {
+        console.error('Token refresh failed:', error);
+        forceLogout();
+        return false;
+    }
+}
+
+export async function apiFetch(url, options = {}) {
+    const authHeaders = getAuthHeaders();
+    const mergedOptions = {
+        ...options,
+        headers: {
+            ...authHeaders,
+            ...(options.headers || {})
+        }
+    };
+
+    let response = await fetch(url, mergedOptions);
+
+    if (response.status === 401 || response.status === 422) {
+        const refreshed = await refreshAccessToken();
+        if (refreshed) {
+            const newHeaders = getAuthHeaders();
+            response = await fetch(url, {
+                ...options,
+                headers: {
+                    ...newHeaders,
+                    ...(options.headers || {})
+                }
+            });
+        }
+    }
+
+    return response;
 }
 
 export function togglePassword(inputId, btn) {
